@@ -1,27 +1,18 @@
 import { useAuth } from "@/hooks/auth";
 import { Navigate, Outlet, useLocation, Link } from "@tanstack/react-router";
-import { Menu, LogOut } from "lucide-react";
-import { motion } from "framer-motion";
+import { Menu, X, LogOut } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { FormatRole } from "@/utils/format-role";
-import { cn } from "@/lib/utils";
 import { useCustomer } from "@/hooks/customer";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const navItems = [
   { label: "Dashboard", path: "/" },
-  { label: "Cadastros", path: "/users" },
+  { label: "Usuários", path: "/users" },
   { label: "Contas", path: "/accounts" },
 ];
 
@@ -30,6 +21,7 @@ export function AppLayout() {
   const location = useLocation();
   const { customer } = useCustomer();
   const path = location.pathname;
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!user) {
     return <Navigate to={"/auth/login" as any} />;
@@ -70,18 +62,15 @@ export function AppLayout() {
                 <Link
                   key={item.path}
                   to={item.path as any}
-                  className={cn(
-                    "relative px-4 py-2 text-sm font-medium transition-colors",
-                    active
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
+                  className="relative px-4 py-2 text-sm font-medium transition-colors duration-200"
+                  style={{ color: active ? "var(--brand-primary)" : undefined }}
                 >
                   {item.label}
                   {active && (
                     <motion.div
                       layoutId="navbar-indicator"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
+                      className="absolute bottom-0 left-0 right-0 h-0.5"
+                      style={{ backgroundColor: "var(--brand-primary)" }}
                       transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                     />
                   )}
@@ -103,70 +92,67 @@ export function AppLayout() {
                   {FormatRole(user.role)}
                 </p>
               </div>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    className="rounded-full focus:outline-none focus:ring-2 focus:ring-ring"
-                    aria-label="Abrir menu do usuário"
-                  >
-                    <Avatar className="h-9 w-9">
-                      <AvatarFallback
-                        className="text-xs font-semibold text-white"
-                        style={{ backgroundColor: "var(--brand-primary)" }}
-                      >
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel className="flex flex-col gap-1">
-                    <span className="text-sm font-medium">{user.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {FormatRole(user.role)}
-                    </span>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => logout()}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sair
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Avatar className="h-9 w-9">
+                <AvatarFallback
+                  className="text-xs font-semibold text-white"
+                  style={{ backgroundColor: "var(--brand-primary)" }}
+                >
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => logout()}
+                aria-label="Sair"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
             </div>
 
-            {/* Mobile menu */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-72">
-                <nav className="mt-6 flex flex-col gap-1">
-                  {navItems.map((item) => {
-                    const active = isActive(item.path);
-                    return (
-                      <Link
-                        key={item.path}
-                        to={item.path as any}
-                        className={cn(
-                          "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-                          active
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        )}
-                      >
-                        {item.label}
-                      </Link>
-                    );
-                  })}
-                </nav>
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Abrir menu"
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        </div>
 
-                <div className="mt-6 flex items-center gap-3 border-t pt-4">
+        {/* Mobile Nav */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden border-t md:hidden"
+            >
+              <nav className="flex flex-col gap-1 p-4">
+                {navItems.map((item) => {
+                  const active = isActive(item.path);
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path as any}
+                      onClick={() => setMobileOpen(false)}
+                      className="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                      style={{
+                        color: active ? "var(--brand-primary)" : undefined,
+                        backgroundColor: active ? "var(--brand-primary-light)" : undefined,
+                      }}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+                <div className="mt-2 flex items-center gap-2 border-t pt-3">
                   <Avatar className="h-9 w-9">
                     <AvatarFallback
                       className="text-xs font-semibold text-white"
@@ -176,12 +162,8 @@ export function AppLayout() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <p className="text-sm font-medium leading-none">
-                      {user.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {FormatRole(user.role)}
-                    </p>
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">{FormatRole(user.role)}</p>
                   </div>
                   <Button
                     variant="ghost"
@@ -192,17 +174,17 @@ export function AppLayout() {
                     <LogOut className="h-4 w-4" />
                   </Button>
                 </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <motion.main
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.28, ease: "easeOut" }}
-        className="mx-auto max-w-[1400px] px-4 py-6 lg:px-8"
+        className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 lg:px-8"
       >
         <Outlet />
       </motion.main>

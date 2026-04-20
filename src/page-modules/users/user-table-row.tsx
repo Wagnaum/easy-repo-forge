@@ -2,8 +2,9 @@ import { TableCell } from "@/components/ui/table";
 import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { UserStatusComponent } from "@/components/user-status";
 import { Button } from "@/components/ui/button";
+import { RoleBadge, StatusBadge } from "@/components/shared/badges";
+import { mapUserStatus } from "@/utils/status-map";
 import {
   ArrowRight,
   Blocks,
@@ -17,7 +18,7 @@ import { formatDocument, numberToCurrent } from "@/utils/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UpdateUserProps } from ".";
 import { GetUserResponse, GetUsersResponse } from "@/api/get-users";
-import { FormatRole } from "@/utils/format-role";
+
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 
@@ -142,7 +143,9 @@ export function UserTableRow({
       <TableCell>
         <span>{formatDocument(user.document)}</span>
       </TableCell>
-      <TableCell>{FormatRole(user.role)}</TableCell>
+      <TableCell>
+        <RoleBadge role={user.role} />
+      </TableCell>
       <TableCell className="text-center">
         {user.role !== "SUPER_ADMIN" ? (
           <span>{numberToCurrent(user.fee)}</span>
@@ -151,7 +154,7 @@ export function UserTableRow({
         )}
       </TableCell>
       <TableCell>
-        <UserStatusComponent status={user.status} />
+        <StatusBadge status={mapUserStatus(user.status)} />
         {user.status === "PRE_APPROVED" && (
           <div className="flex gap-4 mt-2">
             {!isPending ? (

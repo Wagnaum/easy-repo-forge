@@ -1,21 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/auth";
 import { useCustomer } from "@/hooks/customer";
 import { api, parseError } from "@/lib/api";
 import { toastStyle } from "@/utils/toast-style";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/use-navigate";
+import { motion } from "framer-motion";
 
 export function LoginPage() {
   const { login } = useAuth();
   const navigation = useNavigate();
   const { customer } = useCustomer();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,9 +33,7 @@ export function LoginPage() {
       return;
     }
 
-    if (!email || !password) {
-      return;
-    }
+    if (!email || !password) return;
     setLoading(true);
     try {
       const { data } = await api.post("/users/pre-authenticate", {
@@ -56,19 +57,14 @@ export function LoginPage() {
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      return;
-    }
+    if (!email || !password) return;
     setLoading(true);
 
     login(email, password, token)
-      .then(() => {
-        // navigation("/");
-      })
+      .then(() => {})
       .catch((e) => {
         if (e.code === "user-not-verified") {
           toast.error(e.message, toastStyle.error);
-          console.log("user-not-verified");
           setTimeout(
             () =>
               navigation(`/auth/register?inviteId=${e.id}`, {
@@ -82,111 +78,120 @@ export function LoginPage() {
           toast.error(message.message, toastStyle.error);
         }
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   };
 
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Entrar</h1>
-            <p className="text-balance text-muted-foreground">
-              Insira seu e-mail abaixo para fazer login
-            </p>
-          </div>
-          <form onSubmit={handlePreLogin}>
-            <div className="grid gap-4">
-              {!enable2fa && (
-                <>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">E-mail</Label>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full max-w-md"
+    >
+      <Card>
+        <CardContent className="pt-6">
+          <form onSubmit={handlePreLogin} className="space-y-4">
+            {!enable2fa && (
+              <>
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">E-mail</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
                       required
+                      placeholder="seu@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10"
                     />
                   </div>
-                  <div className="grid gap-2">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Password</Label>
-                      <Link
-                        to={"/auth/forgot-password" as any}
-                        className="ml-auto inline-block text-sm underline"
-                      >
-                        Esqueceu sua senha?
-                      </Link>
-                    </div>
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Senha</Label>
+                    <Link
+                      to={"/auth/forgot-password" as any}
+                      className="text-xs text-muted-foreground hover:text-foreground underline"
+                    >
+                      Esqueceu sua senha?
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       required
+                      placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10 pr-10"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                      aria-label="Mostrar/ocultar senha"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
                   </div>
-                </>
-              )}
-
-              {enable2fa && (
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="token">Duplo fator de autenticação</Label>
-                  </div>
-                  <Input
-                    id="token"
-                    type="text"
-                    required
-                    value={token}
-                    autoComplete="off"
-                    onChange={(e) => setToken(e.target.value)}
-                  />
                 </div>
-              )}
+              </>
+            )}
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading && <Loader2 className="w-5 h-5 mr-2 animate-spin" />}
-                Entrar
+            {enable2fa && (
+              <div className="space-y-1.5">
+                <Label htmlFor="token">Duplo fator de autenticação</Label>
+                <Input
+                  id="token"
+                  type="text"
+                  required
+                  value={token}
+                  autoComplete="off"
+                  onChange={(e) => setToken(e.target.value)}
+                />
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full text-white"
+              style={{ backgroundColor: "var(--brand-primary)" }}
+            >
+              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Entrar
+            </Button>
+
+            {enable2fa && (
+              <Button
+                variant="link"
+                type="button"
+                className="w-full"
+                onClick={() => {
+                  setEnable2fa(false);
+                  setToken("");
+                  setEmail("");
+                  setPassword("");
+                }}
+              >
+                Voltar para o login
               </Button>
-
-              {enable2fa && (
-                <Button
-                  variant="link"
-                  type="button"
-                  onClick={() => {
-                    setEnable2fa(false);
-                    setToken("");
-                    setEmail("");
-                    setPassword("");
-                  }}
-                >
-                  Voltar para o login
-                </Button>
-              )}
-            </div>
+            )}
           </form>
-        </div>
-      </div>
-      <div
-        className={`hidden h-screen lg:flex items-center justify-center`}
-        style={{
-          backgroundColor: customer.colors.loginBackground,
-        }}
-      >
-        {customer.name === "Invest Ban" ? (
-          <img src={customer.logo.login} alt="Image" className="h-60 w-auto" />
-        ) : (
-          <img
-            src={customer.logo.dark}
-            alt="Image"
-            className="w-auto max-w-96"
-          />
-        )}
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+
+      <p className="mt-6 text-center text-xs text-muted-foreground">
+        {customer?.name ?? "Plataforma"} — Painel Administrativo
+      </p>
+    </motion.div>
   );
 }

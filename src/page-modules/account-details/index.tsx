@@ -12,15 +12,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/use-navigate";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { GetAccountKeysSidebar } from "./sidebar/get-keys";
 import { MyAccountsSidebar } from "./sidebar/my-accounts";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Loader2, UserRound } from "lucide-react";
+import { ArrowLeft, Key, Loader2, QrCode, Send, UserRound } from "lucide-react";
 import { PayQrCodeAccount } from "./pay-qrcode";
 import { TransactionsAccount } from "./transactions";
-// import { WithdrawAccountSidebar } from "./withdraw";
-// import { RechargeAccountSidebar } from "./recharge";
 import { TransferPixOutSidebar } from "./transfer-pix-out";
 import { useState } from "react";
 import {
@@ -39,17 +36,18 @@ import { toastStyle } from "@/utils/toast-style";
 import { toast } from "sonner";
 import { api, parseError } from "@/lib/api";
 import { useAuth } from "@/hooks/auth";
+import { CopyButton } from "@/components/shared/copy-button";
+import { motion } from "framer-motion";
 
 export function AccountDetailsPage() {
-  const { id = "" } = useParams({ strict: false }) as { id: string  };
+  const { id = "" } = useParams({ strict: false }) as { id: string };
   const navigate = useNavigate();
-
   const { user } = useAuth();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["accounts-details", id],
     queryFn: () => getAccount({ id }),
-    refetchInterval: 1000 * 60, // 1 minute
+    refetchInterval: 1000 * 60,
   });
 
   function handleBack() {
@@ -61,13 +59,8 @@ export function AccountDetailsPage() {
   }
 
   const [changePlayerModal, setChangePlayerModal] = useState(false);
-
   const [loadingChangePlayer, setLoadingChangePlayer] = useState(false);
   const [document, setDocument] = useState("");
-
-  function handleChangePlayerModal() {
-    setChangePlayerModal(true);
-  }
 
   async function handleChangePlayer() {
     if (!document) {
@@ -93,211 +86,218 @@ export function AccountDetailsPage() {
     }
   }
 
+  const canChangePlayer =
+    user?.id === "7facf86b-d736-43bf-b83c-f1751ba5a963" ||
+    user?.id === "2c938eb1-e33a-4f84-ab53-741c06930f1b" ||
+    user?.id === "43a54499-27d1-4085-9ce4-9589f5ec050d" ||
+    user?.id === "77fbc650-26c9-45cd-b218-c15d18054261" ||
+    user?.id === "6f74cd7c-9268-4d8a-9a73-9cb2f3c104b5" ||
+    user?.id === "e797d29d-2468-4d98-8982-d74d926120ee" ||
+    user?.id === "eefd8bb8-926b-40b2-a127-4b2a3599d357";
+
+  const balance =
+    data?.account?.id === "1fff7d44-7a88-4e9a-aca4-2340c86cae6f"
+      ? (data?.account?.balance ?? 0) / 2
+      : data?.account?.balance ?? 0;
+
   return (
-    <>
-      <AlertDialog open={changePlayerModal} onOpenChange={setChangePlayerModal}>
-        <div className="pl-4 text-lg font-semibold flex gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-7 w-7"
-            onClick={handleBack}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Back</span>
-          </Button>
-          <span>Voltar</span>
-        </div>
+    <AlertDialog open={changePlayerModal} onOpenChange={setChangePlayerModal}>
+      <button
+        onClick={handleBack}
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" /> Voltar para contas
+      </button>
 
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-          <div className="gap-4 md:gap-8 lg:col-span-1">
-            <Card className="overflow-hidden rounded-sm">
-              <CardHeader className="flex flex-row items-start bg-muted/50">
-                <div className="grid gap-0.5">
-                  <CardTitle className="group flex items-center gap-2 text-lg">
-                    {isLoading ? (
-                      <Skeleton className="h-7 w-[250px]" />
-                    ) : (
-                      <span className="">
-                        {data?.account?.name}{" "}
-                        <span className="text-xs text-muted-foreground font-normal">
-                          {data?.account?.type === "BET" ? (
-                            <span className="text-green-800">Bet</span>
-                          ) : (
-                            <span className="text-yellow-600">Normal</span>
-                          )}
-                        </span>
-                      </span>
-                    )}
-                  </CardTitle>
-                  <CardDescription className="grid gap-1">
-                    <span className="text-xs">
-                      {isLoading ? (
-                        <Skeleton className="h-4 w-[50px]" />
-                      ) : (
-                        formatDocument(data?.account?.document)
-                      )}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Sidebar */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-4 lg:col-span-1"
+        >
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-start justify-between">
+                <div className="min-w-0">
+                  {isLoading ? (
+                    <Skeleton className="h-6 w-40" />
+                  ) : (
+                    <h2 className="text-lg font-bold truncate">
+                      {data?.account?.name}
+                    </h2>
+                  )}
+                  <span
+                    className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${
+                      data?.account?.type === "BET"
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+                        : "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300"
+                    }`}
+                  >
+                    {data?.account?.type === "BET" ? "Bet" : "Normal"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">CPF</span>
+                  {isLoading ? (
+                    <Skeleton className="h-4 w-24" />
+                  ) : (
+                    <span className="flex items-center gap-1 font-mono text-xs">
+                      {formatDocument(data?.account?.document)}
+                      <CopyButton
+                        text={(data?.account?.document ?? "").replace(/\D/g, "")}
+                      />
                     </span>
-                    <div className="flex">
-                      Conta:{" "}
-                      {isLoading ? (
-                        <Skeleton className="ml-1 h-5  w-1/2" />
-                      ) : (
-                        data?.account?.number
-                      )}
-                    </div>
-                    <div className="flex">
-                      Saldo:{" "}
-                      {isLoading ? (
-                        <Skeleton className="ml-1 h-5  w-1/2" />
-                      ) : (
-                        <>
-                          {data?.account?.id ===
-                          "1fff7d44-7a88-4e9a-aca4-2340c86cae6f" ? (
-                            <>{numberToCurrent(data?.account?.balance / 2)}</>
-                          ) : (
-                            <>{numberToCurrent(data?.account?.balance)}</>
-                          )}
-                        </>
-                      )}
-                    </div>
+                  )}
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Conta</span>
+                  {isLoading ? (
+                    <Skeleton className="h-4 w-24" />
+                  ) : (
+                    <span className="flex items-center gap-1 font-mono text-xs">
+                      {data?.account?.number}
+                      <CopyButton text={String(data?.account?.number ?? "")} />
+                    </span>
+                  )}
+                </div>
+                <div className="border-t pt-3">
+                  <p className="text-xs text-muted-foreground">
+                    Saldo disponível
+                  </p>
+                  {isLoading ? (
+                    <Skeleton className="mt-1 h-8 w-32" />
+                  ) : (
+                    <p
+                      className="text-2xl font-bold tracking-tight"
+                      style={{ color: "var(--brand-primary)" }}
+                    >
+                      {numberToCurrent(balance)}
+                    </p>
+                  )}
+                </div>
 
-                    {(user?.id === "7facf86b-d736-43bf-b83c-f1751ba5a963" ||
-                      user?.id === "2c938eb1-e33a-4f84-ab53-741c06930f1b" ||
-                      user?.id === "43a54499-27d1-4085-9ce4-9589f5ec050d" ||
-                      user?.id === "77fbc650-26c9-45cd-b218-c15d18054261" ||
-                      user?.id === "6f74cd7c-9268-4d8a-9a73-9cb2f3c104b5" ||
-                      user?.id === "e797d29d-2468-4d98-8982-d74d926120ee" ||
-                      user?.id === "eefd8bb8-926b-40b2-a127-4b2a3599d357") && (
-                      <div className="flex">
-                        <Button
-                          variant="destructive"
-                          className="mt-2"
-                          onClick={handleChangePlayerModal}
-                        >
-                          <UserRound className="h-4 w-4" />
-                          Trocar Jogador
-                        </Button>
-                      </div>
-                    )}
-                  </CardDescription>
-                </div>
+                {canChangePlayer && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="w-full gap-2"
+                    onClick={() => setChangePlayerModal(true)}
+                  >
+                    <UserRound className="h-4 w-4" />
+                    Trocar Jogador
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm">Minhas chaves Pix</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <GetAccountKeysSidebar accountId={id} account={data?.account} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm">Minhas últimas contas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <MyAccountsSidebar
+                data={data}
+                isLoading={isLoading}
+                refetch={refetch}
+              />
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Main */}
+        <div className="lg:col-span-2">
+          <Card>
+            <Tabs defaultValue="account">
+              <CardHeader>
+                <CardDescription>
+                  <TabsList className="w-full justify-start">
+                    <TabsTrigger value="account" className="gap-1">
+                      <Key className="h-3.5 w-3.5" />
+                      Transações
+                    </TabsTrigger>
+                    <TabsTrigger value="transfer" className="gap-1">
+                      <Send className="h-3.5 w-3.5" />
+                      Transferir
+                    </TabsTrigger>
+                    <TabsTrigger value="deposit" className="gap-1">
+                      <QrCode className="h-3.5 w-3.5" />
+                      Pagar QrCode
+                    </TabsTrigger>
+                  </TabsList>
+                </CardDescription>
               </CardHeader>
-              <CardContent className="p-6 text-sm">
-                <div className="grid gap-3">
-                  <div className="font-semibold">Minhas chaves Pix</div>
-                  <GetAccountKeysSidebar
-                    accountId={id}
-                    account={data?.account}
-                  />
-                </div>
-                <Separator className="my-4" />
-                <div className="grid gap-3">
-                  <div className="font-semibold">Minhas últimas contas</div>
-                  <MyAccountsSidebar
+              <CardContent>
+                <TabsContent value="account">
+                  {data ? (
+                    <TransactionsAccount accountId={data.account.id} />
+                  ) : (
+                    <div className="space-y-3">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="transfer">
+                  <TransferPixOutSidebar data={data} refetch={refetch} />
+                </TabsContent>
+
+                <TabsContent value="deposit">
+                  <PayQrCodeAccount
                     data={data}
                     isLoading={isLoading}
                     refetch={refetch}
                   />
-                </div>
+                </TabsContent>
               </CardContent>
-            </Card>
-          </div>
-          <div className="grid gap-4 md:gap-8 lg:col-span-2">
-            <Card className="overflow-hidden rounded-sm">
-              <Tabs defaultValue="account">
-                <CardHeader className="flex flex-row items-start">
-                  <CardDescription>
-                    <TabsList>
-                      <TabsTrigger value="account">Transações</TabsTrigger>
+            </Tabs>
+          </Card>
+        </div>
+      </div>
 
-                      {/* {!isLoading && data?.account?.id === data?.main?.id && ( */}
-                      <TabsTrigger value="transfer">Transferir</TabsTrigger>
-                      {/* )} */}
-
-                      {/* {!isLoading && data?.account?.id === data?.main?.id && ( */}
-                      <TabsTrigger value="deposit">Pagar QrCode</TabsTrigger>
-                      {/* )} */}
-
-                      {/* {!isLoading && data?.account?.id !== data?.main?.id && (
-                      <TabsTrigger value="deposit">Depositar</TabsTrigger>
-                    )} */}
-
-                      {/* {!isLoading && data?.account?.id !== data?.main?.id && (
-                      <TabsTrigger value="withdraw">Sacar</TabsTrigger>
-                    )} */}
-                    </TabsList>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                  <Separator className="my-2" />
-                  <TabsContent value="account">
-                    {data ? (
-                      <TransactionsAccount accountId={data.account.id} />
-                    ) : (
-                      <>
-                        <Skeleton className="h-4 mb-4" />
-                        <Skeleton className="h-4 mb-4" />
-                        <Skeleton className="h-4 mb-4" />
-                        <Skeleton className="h-4 mb-4" />
-                      </>
-                    )}
-                  </TabsContent>
-
-                  <TabsContent value="transfer">
-                    <TransferPixOutSidebar data={data} refetch={refetch} />
-                  </TabsContent>
-
-                  <TabsContent value="deposit">
-                    <PayQrCodeAccount
-                      data={data}
-                      isLoading={isLoading}
-                      refetch={refetch}
-                    />
-                  </TabsContent>
-                  {/* <TabsContent value="withdraw">
-                  {data && data?.account?.id !== data?.main?.id && (
-                    <WithdrawAccountSidebar data={data} refetch={refetch} />
-                  )}
-                </TabsContent> */}
-                </CardContent>
-              </Tabs>
-            </Card>
-          </div>
-        </main>
-
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Trocar conta de jogador</AlertDialogTitle>
-            <AlertDialogDescription>
-              <span>
-                Para realizar essa ação, informe o CPF do novo jogador (Para
-                onde a conta será transferida).
-              </span>
-
-              <div className="mt-4 mb-4">
-                <Label htmlFor="last-name">CPF</Label>
-                <Input
-                  id="last-name"
-                  value={Format.CPF(document)}
-                  onChange={(e) => setDocument(e.target.value)}
-                />
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <Button
-              onClick={handleChangePlayer}
-              variant={"default"}
-              disabled={loadingChangePlayer}
-            >
-              {loadingChangePlayer && <Loader2 className="animate-spin mr-2" />}
-              Trocar
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Trocar conta de jogador</AlertDialogTitle>
+          <AlertDialogDescription>
+            Para realizar essa ação, informe o CPF do novo jogador (Para onde a
+            conta será transferida).
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <div className="mt-2 mb-2">
+          <Label htmlFor="last-name">CPF</Label>
+          <Input
+            id="last-name"
+            value={Format.CPF(document)}
+            onChange={(e) => setDocument(e.target.value)}
+          />
+        </div>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <Button
+            onClick={handleChangePlayer}
+            disabled={loadingChangePlayer}
+          >
+            {loadingChangePlayer && <Loader2 className="animate-spin mr-2" />}
+            Trocar
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

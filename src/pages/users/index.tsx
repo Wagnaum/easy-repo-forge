@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "@/lib/use-search-params";
 import { z } from "zod";
 import { useAuth } from "@/hooks/auth";
 import { cn } from "@/lib/utils";

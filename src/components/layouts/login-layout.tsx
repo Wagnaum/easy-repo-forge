@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/auth";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "@tanstack/react-router";
 
 export function LoginLayout() {
   const { user } = useAuth();

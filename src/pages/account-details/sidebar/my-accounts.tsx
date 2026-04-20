@@ -25,7 +25,7 @@ import {
 // import { toast } from "sonner";
 // import { api, parseError } from "@/lib/api";
 import { QueryObserverResult } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 // import { useAuth } from "@/hooks/auth";
 
 interface MyAccountsSidebarProps {

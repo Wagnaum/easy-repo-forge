@@ -4,7 +4,7 @@ import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Copy } from "lucide-react";
 import { formatDocument, numberToCurrent } from "@/utils/format";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { GetAccountResponse } from "@/api/get-accounts";
 import { FormatAccountStatus } from "@/utils/format-role";
 import CopyToClipboard from "react-copy-to-clipboard";

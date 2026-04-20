@@ -8,7 +8,7 @@ import { toastStyle } from "@/utils/toast-style";
 import { Loader2 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 export function LoginPage() {
   const { login } = useAuth();

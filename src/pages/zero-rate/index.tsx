@@ -20,7 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "@/lib/use-search-params";
 import { z } from "zod";
 import IntlCurrencyInput from "@/components/react-intl-currency-input/intl-currency-input";
 

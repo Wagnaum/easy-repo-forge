@@ -27,7 +27,6 @@ import {
 // import { ChartRevenue } from "./chart-revenue";
 import { useAuth } from "@/hooks/auth";
 import { Enable2fa } from "./enable2fa";
-import { Helmet } from "react-helmet-async";
 import { useCustomer } from "@/hooks/customer";
 import { api } from "@/lib/api";
 import { useIsOwem } from "@/hooks/is-owem";
@@ -116,7 +115,6 @@ export function HomePage() {
 
   return (
     <>
-      <Helmet title={`Painel | ${customer.name}`} />
       <Popover open={openDatePicker} onOpenChange={setOpenDatePicker}>
         <div className="flex">
           <div className="flex flex-1">

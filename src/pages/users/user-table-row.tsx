@@ -37,7 +37,7 @@ import { api, parseError } from "@/lib/api";
 import { QueryObserverResult } from "@tanstack/react-query";
 import { toastStyle } from "@/utils/toast-style";
 import { useAuth } from "@/hooks/auth";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,

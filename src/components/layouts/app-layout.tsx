@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/auth";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "@tanstack/react-router";
 import { CircleUser, Menu } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 import {
   DropdownMenu,

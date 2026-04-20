@@ -14,7 +14,7 @@ import { formatDocument } from "@/utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "@/lib/use-search-params";
 import { z } from "zod";
 
 export function GatewaysPage() {

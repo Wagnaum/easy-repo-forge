@@ -1,13 +1,13 @@
 import { getKyc } from "@/api/get-kyc";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams } from "@tanstack/react-router";
 import { UserBasicData } from "./basic-data";
 import { Documents } from "./documents/documents";
 import { Kyc } from "./kyc";
 
 export function UserDetailsPage() {
-  const { id = "" } = useParams<{ id: string }>();
+  const { id = "" } = useParams({ strict: false }) as { id: string  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["user-details:kyc", id],

@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "@/lib/use-search-params";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { Pagination } from "@/components/pagination";

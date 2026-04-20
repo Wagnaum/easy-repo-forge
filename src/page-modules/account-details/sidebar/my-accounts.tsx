@@ -104,7 +104,7 @@ export function MyAccountsSidebar({
                 </p>
               </span>
               <span>
-                <Link to={`/accounts/${account.id}`}>
+                <Link to={`/accounts/${account.id}` as any}>
                   <Button variant="ghost" className="flex gap-2">
                     Acessar
                     <ArrowRightIcon className="w-4 h-4" />

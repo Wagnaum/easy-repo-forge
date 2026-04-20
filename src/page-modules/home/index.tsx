@@ -30,6 +30,7 @@ import { Enable2fa } from "./enable2fa";
 import { useCustomer } from "@/hooks/customer";
 import { api } from "@/lib/api";
 import { useIsOwem } from "@/hooks/is-owem";
+import { numberToCurrent } from "@/utils/format";
 
 export function HomePage() {
   const { user } = useAuth();
@@ -190,7 +191,7 @@ export function HomePage() {
           <>
             <KPICard
               title="Contas"
-              value={withdraw?.withdraw?.totalGeneralAmount ?? 0}
+              value={numberToCurrent(withdraw?.withdraw?.totalGeneralAmount ?? 0)}
               subtitle="Total no período"
               index={0}
               icon={
@@ -202,7 +203,7 @@ export function HomePage() {
             />
             <KPICard
               title="Contas Pagas"
-              value={withdraw?.withdraw?.totalNormalAmount ?? 0}
+              value={numberToCurrent(withdraw?.withdraw?.totalNormalAmount ?? 0)}
               subtitle="Saques cobrados"
               index={1}
               icon={
@@ -214,7 +215,7 @@ export function HomePage() {
             />
             <KPICard
               title="Contas Não Pagas"
-              value={withdraw?.withdraw?.totalFreeAmount ?? 0}
+              value={numberToCurrent(withdraw?.withdraw?.totalFreeAmount ?? 0)}
               subtitle="Saques taxa zero"
               index={2}
               icon={

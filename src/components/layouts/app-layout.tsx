@@ -1,8 +1,7 @@
 import { useAuth } from "@/hooks/auth";
 import { Navigate, Outlet, useLocation, Link } from "@tanstack/react-router";
-import { CircleUser, Menu, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { Menu, LogOut } from "lucide-react";
+import { motion } from "framer-motion";
 
 import {
   DropdownMenu,
@@ -30,11 +29,7 @@ export function AppLayout() {
   const { user, logout } = useAuth();
   const location = useLocation();
   const { customer } = useCustomer();
-  const [path, setPath] = useState<string>(location.pathname);
-
-  useEffect(() => {
-    setPath(location.pathname);
-  }, [location]);
+  const path = location.pathname;
 
   if (!user) {
     return <Navigate to={"/auth/login" as any} />;
@@ -203,18 +198,14 @@ export function AppLayout() {
         </div>
       </header>
 
-      <AnimatePresence mode="wait">
-        <motion.main
-          key={location.pathname}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.28, ease: "easeOut" }}
-          className="mx-auto max-w-[1400px] px-4 py-6 lg:px-8"
-        >
-          <Outlet />
-        </motion.main>
-      </AnimatePresence>
+      <motion.main
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.28, ease: "easeOut" }}
+        className="mx-auto max-w-[1400px] px-4 py-6 lg:px-8"
+      >
+        <Outlet />
+      </motion.main>
     </div>
   );
 }

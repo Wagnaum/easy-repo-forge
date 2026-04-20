@@ -23,7 +23,7 @@ import { ptBR } from "date-fns/locale";
 const chartConfig = {
   accounts: {
     label: "Contas",
-    color: "hsl(var(--chart-3))",
+    color: "var(--brand-accent)",
   },
 } satisfies ChartConfig;
 
@@ -54,9 +54,9 @@ export function ChartAccount({
   }, [statistics?.accounts?.statistics]);
 
   return (
-    <Card className="w-full">
+    <Card className="w-full rounded-xl border bg-card">
       <CardHeader>
-        <CardTitle>Cadastro de contas</CardTitle>
+        <CardTitle className="text-lg font-semibold">Cadastro de contas</CardTitle>
         <CardDescription>
           {startAt && endAt && (
             <>
@@ -86,7 +86,7 @@ export function ChartAccount({
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="accounts" fill="var(--color-accounts)" radius={8} />
+            <Bar dataKey="accounts" fill="var(--brand-accent)" radius={8} />
           </BarChart>
         </ChartContainer>
       </CardContent>

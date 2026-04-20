@@ -23,11 +23,11 @@ const chartConfig = {
   },
   chrome: {
     label: "Contas",
-    color: "hsl(var(--chart-3))",
+    color: "var(--brand-primary)",
   },
   safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
+    label: "Restante",
+    color: "var(--brand-accent)",
   },
 } satisfies ChartConfig;
 
@@ -55,9 +55,9 @@ export function TotalAccounts({
   }, [total]);
 
   return (
-    <Card className="flex flex-col w-full xl:col-span-2">
+    <Card className="flex flex-col w-full xl:col-span-2 rounded-xl border bg-card">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Total de contas</CardTitle>
+        <CardTitle className="text-lg font-semibold">Total de contas</CardTitle>
         {/* <CardDescription>January - June 2024</CardDescription> */}
       </CardHeader>
       <CardContent className="flex-1 pb-0 lg:mt-10">

@@ -215,7 +215,7 @@ export function HomePage() {
             />
             <KPICard
               title="Contas Não Pagas"
-              value={withdraw?.withdraw?.totalFreeAmount ?? 0}
+              value={numberToCurrent(withdraw?.withdraw?.totalFreeAmount ?? 0)}
               subtitle="Saques taxa zero"
               index={2}
               icon={

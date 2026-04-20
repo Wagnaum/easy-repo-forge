@@ -60,36 +60,34 @@ export function AccountsPage() {
 
   return (
     <>
-      <h1>Contas</h1>
+      <div>
+        <h1 className="text-2xl font-bold">Contas</h1>
+        <p className="text-sm text-muted-foreground">Gerencie todas as contas da plataforma</p>
+      </div>
       <AccountTableFilters refetch={refetch} />
-      {/* <Separator /> */}
-      <Table>
-        <TableHeader>
-          <TableRow className={cn(isLoading && "hidden")}>
-            <TableHead className="w-[130px]">Criada há</TableHead>
-            <TableHead className="w-[200px]">Nome</TableHead>
-            <TableHead className="w-[140px]">CPF</TableHead>
-            <TableHead className="w-[140px] text-center">Taxa</TableHead>
-            <TableHead className="w-[140px] text-center">Saldo</TableHead>
-            {/* <TableHead className="w-[140px] text-center">
-              Saque Taxa Zero
-            </TableHead> */}
-            {/* <TableHead className="w-[140px] text-center">
-              Contas Abertas
-            </TableHead> */}
-            <TableHead className="w-[100px]">Status</TableHead>
-            <TableHead className="w-[90px]"></TableHead>
-          </TableRow>
-        </TableHeader>
+      <div className="rounded-xl border bg-card overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className={cn(isLoading && "hidden")}>
+              <TableHead className="w-[130px]">Criada há</TableHead>
+              <TableHead className="w-[200px]">Nome</TableHead>
+              <TableHead className="w-[140px]">CPF</TableHead>
+              <TableHead className="w-[140px] text-center">Taxa</TableHead>
+              <TableHead className="w-[140px] text-center">Saldo</TableHead>
+              <TableHead className="w-[100px]">Status</TableHead>
+              <TableHead className="w-[90px]"></TableHead>
+            </TableRow>
+          </TableHeader>
 
-        <TableBody>
-          {result &&
-            result?.data.map((account) => {
-              return <AccountTableRow key={account.id} account={account} refetch={refetch} />;
-            })}
-          {isLoading && <AccountTableSkeleton />}
-        </TableBody>
-      </Table>
+          <TableBody>
+            {result &&
+              result?.data.map((account, idx) => {
+                return <AccountTableRow key={account.id} account={account} refetch={refetch} index={idx} />;
+              })}
+            {isLoading && <AccountTableSkeleton />}
+          </TableBody>
+        </Table>
+      </div>
 
       {result && result?.pagination?.totalPages > 1 && (
         <Pagination

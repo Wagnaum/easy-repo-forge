@@ -18,7 +18,7 @@ import { formatDocument, numberToCurrent } from "@/utils/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UpdateUserProps } from ".";
 import { GetUserResponse, GetUsersResponse } from "@/api/get-users";
-import { FormatRole } from "@/utils/format-role";
+
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 

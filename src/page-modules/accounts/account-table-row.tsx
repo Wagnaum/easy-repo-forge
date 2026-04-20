@@ -128,7 +128,7 @@ export function AccountTableRow({ account, refetch }: AccountTableRowProps) {
         <Button variant="ghost" size="sm">
           {account.status === "APPROVED" && (
             <Link
-              to={`/accounts/${account.id}`}
+              to={`/accounts/${account.id}` as any}
               className="flex items-center text-sm"
             >
               <ArrowRight className="mr-2 h-3 w-3" />

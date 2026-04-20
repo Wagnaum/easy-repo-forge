@@ -115,7 +115,7 @@ export function LoginPage() {
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
                       <Link
-                        to="/auth/forgot-password"
+                        to={"/auth/forgot-password" as any}
                         className="ml-auto inline-block text-sm underline"
                       >
                         Esqueceu sua senha?

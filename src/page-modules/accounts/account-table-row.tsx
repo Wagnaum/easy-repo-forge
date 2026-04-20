@@ -1,4 +1,4 @@
-import { TableCell, TableRow } from "@/components/ui/table";
+import { TableCell } from "@/components/ui/table";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,12 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 import { toastStyle } from "@/utils/toast-style";
 import { api } from "@/lib/api";
+import { motion } from "framer-motion";
 
 interface AccountTableRowProps {
   account: GetAccountResponse;
   refetch: () => void;
+  index?: number;
 }
 
 export function AccountTableRow({ account, refetch }: AccountTableRowProps) {

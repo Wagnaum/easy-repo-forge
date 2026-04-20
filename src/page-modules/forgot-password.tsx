@@ -7,7 +7,7 @@ import { toastStyle } from "@/utils/toast-style";
 import { Loader2 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@/lib/use-navigate";
 import { useSearchParams } from "@/lib/use-search-params";
 import { z } from "zod";
 

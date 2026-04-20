@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { UserStatusComponent } from "@/components/user-status";
 import { ArrowRight, ChevronLeft } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@/lib/use-navigate";
 import {
   Table,
   TableBody,

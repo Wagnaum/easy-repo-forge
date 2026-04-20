@@ -179,7 +179,7 @@ export function OwemDocumentUpload({
 
   function renderUploadButton(
     type: DocumentUploadType,
-    inputRef: React.RefObject<HTMLInputElement>,
+    inputRef: React.RefObject<HTMLInputElement | null>,
     isCompleted: boolean,
     disabled: boolean = false
   ) {

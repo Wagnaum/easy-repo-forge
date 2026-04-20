@@ -23,7 +23,8 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@/lib/use-navigate";
 import { useSearchParams } from "@/lib/use-search-params";
 import { z } from "zod";
 

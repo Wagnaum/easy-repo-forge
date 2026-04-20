@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusComponent } from "@/components/user-status";
 import { ChevronLeft } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@/lib/use-navigate";
 import { KycDataBasicPage } from "./data-basic";
 import { Processess } from "./processess";
 

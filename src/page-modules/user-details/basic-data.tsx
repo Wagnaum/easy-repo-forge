@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ChevronLeft } from "lucide-react";
 
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@/lib/use-navigate";
 import {
   Card,
   CardContent,

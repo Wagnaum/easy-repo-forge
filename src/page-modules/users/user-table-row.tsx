@@ -143,7 +143,9 @@ export function UserTableRow({
       <TableCell>
         <span>{formatDocument(user.document)}</span>
       </TableCell>
-      <TableCell>{FormatRole(user.role)}</TableCell>
+      <TableCell>
+        <RoleBadge role={user.role} />
+      </TableCell>
       <TableCell className="text-center">
         {user.role !== "SUPER_ADMIN" ? (
           <span>{numberToCurrent(user.fee)}</span>
@@ -152,7 +154,7 @@ export function UserTableRow({
         )}
       </TableCell>
       <TableCell>
-        <UserStatusComponent status={user.status} />
+        <StatusBadge status={mapUserStatus(user.status)} />
         {user.status === "PRE_APPROVED" && (
           <div className="flex gap-4 mt-2">
             {!isPending ? (

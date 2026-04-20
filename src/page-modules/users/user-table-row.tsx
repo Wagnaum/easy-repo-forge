@@ -1,4 +1,5 @@
-import { TableCell, TableRow } from "@/components/ui/table";
+import { TableCell } from "@/components/ui/table";
+import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { UserStatusComponent } from "@/components/user-status";
@@ -53,6 +54,7 @@ interface UserTableRowProps {
   onStatusChange: (data: UpdateUserProps) => void;
   permissionForcedPreApproved: boolean;
   refetch: () => Promise<QueryObserverResult<GetUsersResponse, Error>>;
+  index?: number;
 }
 
 export function UserTableRow({
@@ -61,6 +63,7 @@ export function UserTableRow({
   onStatusChange,
   isPending,
   refetch,
+  index = 0,
 }: UserTableRowProps) {
   const [fee, setFee] = useState<string>(
     user.fee ? Format.DecimalNumber(String(user.fee * 100)) : "0,00"
@@ -104,7 +107,12 @@ export function UserTableRow({
   }
 
   return (
-    <TableRow className="">
+    <motion.tr
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.03, duration: 0.2 }}
+      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+    >
       <TableCell className="text-muted-foreground">
         {formatDistanceToNow(user.createdAt, {
           locale: ptBR,
@@ -349,6 +357,6 @@ export function UserTableRow({
           )}
         </div>
       </TableCell>
-    </TableRow>
+    </motion.tr>
   );
 }

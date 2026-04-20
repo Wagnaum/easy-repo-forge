@@ -9,51 +9,429 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AuthIndexRouteImport } from './routes/auth.index'
+import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AuthSignoutRouteImport } from './routes/auth.signout'
+import { Route as AuthRegisterRouteImport } from './routes/auth.register'
+import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AppZeroRateRouteImport } from './routes/_app.zero-rate'
+import { Route as AppUsersRouteImport } from './routes/_app.users'
+import { Route as AppSignoutRouteImport } from './routes/_app.signout'
+import { Route as AppGatewaysRouteImport } from './routes/_app.gateways'
+import { Route as AppAccountsRouteImport } from './routes/_app.accounts'
+import { Route as AuthAccountRegisterRouteImport } from './routes/auth.account.register'
+import { Route as AuthAccountOpenRegisterRouteImport } from './routes/auth.account.open-register'
+import { Route as AppUsersIdRouteImport } from './routes/_app.users.$id'
+import { Route as AppAccountsIdRouteImport } from './routes/_app.accounts.$id'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthRoute,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AuthSignoutRoute = AuthSignoutRouteImport.update({
+  id: '/signout',
+  path: '/signout',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AppZeroRateRoute = AppZeroRateRouteImport.update({
+  id: '/zero-rate',
+  path: '/zero-rate',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSignoutRoute = AppSignoutRouteImport.update({
+  id: '/signout',
+  path: '/signout',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGatewaysRoute = AppGatewaysRouteImport.update({
+  id: '/gateways',
+  path: '/gateways',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAccountsRoute = AppAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AuthAccountRegisterRoute = AuthAccountRegisterRouteImport.update({
+  id: '/account/register',
+  path: '/account/register',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthAccountOpenRegisterRoute = AuthAccountOpenRegisterRouteImport.update({
+  id: '/account/open-register',
+  path: '/account/open-register',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AppUsersIdRoute = AppUsersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppUsersRoute,
+} as any)
+const AppAccountsIdRoute = AppAccountsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppAccountsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/accounts': typeof AppAccountsRouteWithChildren
+  '/gateways': typeof AppGatewaysRoute
+  '/signout': typeof AppSignoutRoute
+  '/users': typeof AppUsersRouteWithChildren
+  '/zero-rate': typeof AppZeroRateRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/signout': typeof AuthSignoutRoute
+  '/auth/': typeof AuthIndexRoute
+  '/accounts/$id': typeof AppAccountsIdRoute
+  '/users/$id': typeof AppUsersIdRoute
+  '/auth/account/open-register': typeof AuthAccountOpenRegisterRoute
+  '/auth/account/register': typeof AuthAccountRegisterRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/accounts': typeof AppAccountsRouteWithChildren
+  '/gateways': typeof AppGatewaysRoute
+  '/signout': typeof AppSignoutRoute
+  '/users': typeof AppUsersRouteWithChildren
+  '/zero-rate': typeof AppZeroRateRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/signout': typeof AuthSignoutRoute
+  '/': typeof AppIndexRoute
+  '/auth': typeof AuthIndexRoute
+  '/accounts/$id': typeof AppAccountsIdRoute
+  '/users/$id': typeof AppUsersIdRoute
+  '/auth/account/open-register': typeof AuthAccountOpenRegisterRoute
+  '/auth/account/register': typeof AuthAccountRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/_app/accounts': typeof AppAccountsRouteWithChildren
+  '/_app/gateways': typeof AppGatewaysRoute
+  '/_app/signout': typeof AppSignoutRoute
+  '/_app/users': typeof AppUsersRouteWithChildren
+  '/_app/zero-rate': typeof AppZeroRateRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/signout': typeof AuthSignoutRoute
+  '/_app/': typeof AppIndexRoute
+  '/auth/': typeof AuthIndexRoute
+  '/_app/accounts/$id': typeof AppAccountsIdRoute
+  '/_app/users/$id': typeof AppUsersIdRoute
+  '/auth/account/open-register': typeof AuthAccountOpenRegisterRoute
+  '/auth/account/register': typeof AuthAccountRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/accounts'
+    | '/gateways'
+    | '/signout'
+    | '/users'
+    | '/zero-rate'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/signout'
+    | '/auth/'
+    | '/accounts/$id'
+    | '/users/$id'
+    | '/auth/account/open-register'
+    | '/auth/account/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/accounts'
+    | '/gateways'
+    | '/signout'
+    | '/users'
+    | '/zero-rate'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/signout'
+    | '/'
+    | '/auth'
+    | '/accounts/$id'
+    | '/users/$id'
+    | '/auth/account/open-register'
+    | '/auth/account/register'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/auth'
+    | '/_app/accounts'
+    | '/_app/gateways'
+    | '/_app/signout'
+    | '/_app/users'
+    | '/_app/zero-rate'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/signout'
+    | '/_app/'
+    | '/auth/'
+    | '/_app/accounts/$id'
+    | '/_app/users/$id'
+    | '/auth/account/open-register'
+    | '/auth/account/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/auth/signout': {
+      id: '/auth/signout'
+      path: '/signout'
+      fullPath: '/auth/signout'
+      preLoaderRoute: typeof AuthSignoutRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_app/zero-rate': {
+      id: '/_app/zero-rate'
+      path: '/zero-rate'
+      fullPath: '/zero-rate'
+      preLoaderRoute: typeof AppZeroRateRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/users': {
+      id: '/_app/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/signout': {
+      id: '/_app/signout'
+      path: '/signout'
+      fullPath: '/signout'
+      preLoaderRoute: typeof AppSignoutRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/gateways': {
+      id: '/_app/gateways'
+      path: '/gateways'
+      fullPath: '/gateways'
+      preLoaderRoute: typeof AppGatewaysRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/accounts': {
+      id: '/_app/accounts'
+      path: '/accounts'
+      fullPath: '/accounts'
+      preLoaderRoute: typeof AppAccountsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/auth/account/register': {
+      id: '/auth/account/register'
+      path: '/account/register'
+      fullPath: '/auth/account/register'
+      preLoaderRoute: typeof AuthAccountRegisterRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/account/open-register': {
+      id: '/auth/account/open-register'
+      path: '/account/open-register'
+      fullPath: '/auth/account/open-register'
+      preLoaderRoute: typeof AuthAccountOpenRegisterRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_app/users/$id': {
+      id: '/_app/users/$id'
+      path: '/$id'
+      fullPath: '/users/$id'
+      preLoaderRoute: typeof AppUsersIdRouteImport
+      parentRoute: typeof AppUsersRoute
+    }
+    '/_app/accounts/$id': {
+      id: '/_app/accounts/$id'
+      path: '/$id'
+      fullPath: '/accounts/$id'
+      preLoaderRoute: typeof AppAccountsIdRouteImport
+      parentRoute: typeof AppAccountsRoute
     }
   }
 }
 
+interface AppAccountsRouteChildren {
+  AppAccountsIdRoute: typeof AppAccountsIdRoute
+}
+
+const AppAccountsRouteChildren: AppAccountsRouteChildren = {
+  AppAccountsIdRoute: AppAccountsIdRoute,
+}
+
+const AppAccountsRouteWithChildren = AppAccountsRoute._addFileChildren(
+  AppAccountsRouteChildren,
+)
+
+interface AppUsersRouteChildren {
+  AppUsersIdRoute: typeof AppUsersIdRoute
+}
+
+const AppUsersRouteChildren: AppUsersRouteChildren = {
+  AppUsersIdRoute: AppUsersIdRoute,
+}
+
+const AppUsersRouteWithChildren = AppUsersRoute._addFileChildren(
+  AppUsersRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppAccountsRoute: typeof AppAccountsRouteWithChildren
+  AppGatewaysRoute: typeof AppGatewaysRoute
+  AppSignoutRoute: typeof AppSignoutRoute
+  AppUsersRoute: typeof AppUsersRouteWithChildren
+  AppZeroRateRoute: typeof AppZeroRateRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAccountsRoute: AppAccountsRouteWithChildren,
+  AppGatewaysRoute: AppGatewaysRoute,
+  AppSignoutRoute: AppSignoutRoute,
+  AppUsersRoute: AppUsersRouteWithChildren,
+  AppZeroRateRoute: AppZeroRateRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface AuthRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthSignoutRoute: typeof AuthSignoutRoute
+  AuthIndexRoute: typeof AuthIndexRoute
+  AuthAccountOpenRegisterRoute: typeof AuthAccountOpenRegisterRoute
+  AuthAccountRegisterRoute: typeof AuthAccountRegisterRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
+  AuthSignoutRoute: AuthSignoutRoute,
+  AuthIndexRoute: AuthIndexRoute,
+  AuthAccountOpenRegisterRoute: AuthAccountOpenRegisterRoute,
+  AuthAccountRegisterRoute: AuthAccountRegisterRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

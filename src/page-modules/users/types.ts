@@ -1,0 +1,12 @@
+export type UserStatus =
+  | 'PENDING'
+  | 'WAITING_INDIVIDUAL'
+  | 'WAITING_ADDRESS'
+  | 'WAITING_DOCUMENT'
+  | 'WAITING_ANALYSIS'
+  | 'IN_ANALYSIS'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'PRE_APPROVED'
+  | 'REJECTED_KYC'
+  | 'BLOCKED'

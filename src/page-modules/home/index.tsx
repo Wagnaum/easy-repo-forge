@@ -191,7 +191,7 @@ export function HomePage() {
           <>
             <KPICard
               title="Contas"
-              value={withdraw?.withdraw?.totalGeneralAmount ?? 0}
+              value={numberToCurrent(withdraw?.withdraw?.totalGeneralAmount ?? 0)}
               subtitle="Total no período"
               index={0}
               icon={

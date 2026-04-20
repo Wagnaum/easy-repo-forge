@@ -1,39 +1,43 @@
 
-## Plano: Migrar projeto React/Vite do GitHub para o Lovable
+## Plano: Aplicar o design de outro projeto (mantendo as funcionalidades atuais)
 
-### 1. Você cola o link do repo no próximo chat
-Assim que você mandar a URL pública do GitHub, eu:
-- Exploro a estrutura do projeto (rotas, componentes, estilos, dependências)
-- Identifico o que é compatível direto e o que precisa adaptar
-- Listo as chamadas à API externa (endpoints, auth, headers)
+### O que muda e o que NÃO muda
+**NÃO muda** (preservado 100%):
+- Rotas (`src/routes/`), APIs (`src/api/`), contexts (`auth`, `customer`), hooks, lógica de negócio, integração com `https://production.herobank.com.br`, formulários, fluxos de KYC, contas, transações, etc.
 
-### 2. Adaptação para a stack daqui
-O Lovable roda **React 19 + TanStack Start + Tailwind v4 + shadcn/ui**. Vou converter:
-- **Roteamento** → de React Router / Next.js routes para `src/routes/` (file-based do TanStack)
-- **Estilos** → manter Tailwind, ajustando para v4 (tokens em `src/styles.css`)
-- **Componentes UI** → reaproveitar shadcn já instalado quando equivalente
-- **Assets** (imagens, fontes, ícones) → copiar para `src/assets/`
-- **Variáveis de ambiente** → migrar para Secrets do Lovable Cloud (sem expor chaves no client)
+**Muda** (camada visual):
+- Tokens de cor (claro + escuro) em `src/styles.css`
+- Fontes e escalas tipográficas
+- Visual dos componentes shadcn (`button`, `input`, `card`, `badge`, `table`, etc.)
+- Layout shell: `app-layout.tsx` (sidebar + header) e `login-layout.tsx`
 
-### 3. Migração em fases (porque é grande)
-Pra não quebrar nada de uma vez, vou fazer assim:
-1. **Fase 1 — Esqueleto**: layout raiz, navegação, tema, dependências, tokens de design
-2. **Fase 2 — Telas principais**: home + 2-3 páginas mais importantes (você escolhe quais priorizar depois de eu mapear)
-3. **Fase 3 — Telas secundárias**: o resto das páginas
-4. **Fase 4 — Integração com API externa**: criar um cliente HTTP central (`src/lib/api.ts`), tipos compartilhados, hooks com TanStack Query, tratamento de erro/loading
-5. **Fase 5 — Polish**: estados de erro, 404, responsividade, SEO por rota (title/description/og)
+### Passo 1 — Inspecionar o projeto de referência
+Assim que você me disser qual projeto é, eu leio:
+- `src/styles.css` → copio tokens oklch (claro/escuro), radius, fontes
+- `index.html` → fontes carregadas (Google Fonts, etc.)
+- `src/components/ui/*` → variantes customizadas (ex: button com gradient, card com sombra própria)
+- Layout/sidebar → estrutura visual (largura, cabeçalho, agrupamento de itens, toggle de tema)
 
-### 4. Backend externo
-Como a API fica fora, vou:
-- Criar um wrapper de fetch tipado em `src/lib/api.ts` com base URL configurável
-- Usar **TanStack Query** para cache, loading e refetch
-- Guardar URL base e qualquer chave pública em variáveis de ambiente (`VITE_API_URL` etc.)
-- Se houver auth via token, criar um contexto/provider e interceptor
+### Passo 2 — Aplicar tokens
+Substituo as variáveis `--background`, `--foreground`, `--primary`, `--sidebar-*`, `--chart-*`, etc. em `src/styles.css` (`:root` e `.dark`) pelas do projeto de referência. Atualizo `--font-sans` / `--font-mono` e adiciono `<link>` das fontes em `index.html` se necessário.
 
-### 5. Sincronização com GitHub (opcional, recomendado)
-Depois que estiver rodando aqui, posso te orientar a conectar este projeto Lovable a um **novo repo no seu GitHub** (via Connectors → GitHub). Aí qualquer mudança aqui vai automaticamente pro seu GitHub e vice-versa.
+### Passo 3 — Atualizar componentes shadcn
+Para cada componente em `src/components/ui/` que tiver visual diferente no projeto de referência, copio as `cva` variants/classes (ex: `button.tsx` com novo `default`/`outline`, `card.tsx` com nova sombra/borda). Mantenho a API (props) intacta pra não quebrar nada que já consome.
 
-### O que você precisa fazer agora
-👉 **Mandar o link público do repositório no próximo chat.** Se for privado, você precisa torná-lo público temporariamente ou copiar os arquivos manualmente, porque eu não tenho acesso autenticado ao seu GitHub.
+### Passo 4 — Refazer os layouts
+- `src/components/layouts/app-layout.tsx`: aplico a nova estrutura de sidebar (provavelmente migrando para `shadcn/ui sidebar` se o projeto referência usar), header, espaçamentos, cores. **Mantenho exatamente os mesmos itens de menu e rotas atuais** (`/`, `/users`, `/accounts`, `/gateways`, `/zero-rate`, signout).
+- `src/components/layouts/login-layout.tsx`: aplica o visual de tela de auth do referência (split screen, hero, etc.) preservando o `<Outlet />` das rotas `auth.*`.
 
-Depois disso eu mapeio tudo e a gente começa pela Fase 1.
+### Passo 5 — Toggle de tema
+Adiciono um `ThemeProvider` simples (classe `.dark` no `<html>`) + botão de toggle no header do `app-layout`. Se o projeto referência já tiver, copio igual.
+
+### Passo 6 — Logos
+Deixo placeholders nos lugares atuais (`public/logos/...`). Quando você mandar os novos, eu substituo.
+
+### Verificação final
+- Navegar `/auth/login` → `/` → `/users` → `/users/:id` → `/accounts` → `/accounts/:id` conferindo se todos os fluxos seguem funcionando com o novo visual.
+- Testar toggle de tema em todas as telas principais.
+- Conferir mobile (sidebar colapsada).
+
+### O que preciso de você agora
+👉 **Me diga o nome do projeto de referência** (ou use `@nome-do-projeto` no chat). Sem isso eu não consigo ler os tokens e componentes dele.

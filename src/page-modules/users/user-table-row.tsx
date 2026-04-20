@@ -2,8 +2,9 @@ import { TableCell } from "@/components/ui/table";
 import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { UserStatusComponent } from "@/components/user-status";
 import { Button } from "@/components/ui/button";
+import { RoleBadge, StatusBadge } from "@/components/shared/badges";
+import { mapUserStatus } from "@/utils/status-map";
 import {
   ArrowRight,
   Blocks,

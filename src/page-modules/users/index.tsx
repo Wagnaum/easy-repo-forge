@@ -167,7 +167,7 @@ export function UsersPage() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold">Usuários</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Usuários</h1>
         <p className="text-sm text-muted-foreground">Gerencie os usuários da plataforma</p>
       </div>
       <UserTableFilters refetch={refetch} />

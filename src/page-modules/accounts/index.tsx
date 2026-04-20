@@ -61,7 +61,7 @@ export function AccountsPage() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold">Contas</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Contas</h1>
         <p className="text-sm text-muted-foreground">Gerencie todas as contas da plataforma</p>
       </div>
       <AccountTableFilters refetch={refetch} />

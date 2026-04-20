@@ -6,12 +6,13 @@ import { ArrowRight, Copy } from "lucide-react";
 import { formatDocument, numberToCurrent } from "@/utils/format";
 import { Link } from "@tanstack/react-router";
 import { GetAccountResponse } from "@/api/get-accounts";
-import { FormatAccountStatus } from "@/utils/format-role";
 import CopyToClipboard from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 import { toastStyle } from "@/utils/toast-style";
 import { api } from "@/lib/api";
 import { motion } from "framer-motion";
+import { StatusBadge } from "@/components/shared/badges";
+import { mapAccountStatus } from "@/utils/status-map";
 
 interface AccountTableRowProps {
   account: GetAccountResponse;
@@ -77,8 +78,8 @@ export function AccountTableRow({ account, refetch, index = 0 }: AccountTableRow
         )}
       </TableCell>
       <TableCell>
-        <span>{FormatAccountStatus(account.status)}</span>
-        <div className="text-muted-foreground text-xs">
+        <StatusBadge status={mapAccountStatus(account.status)} />
+        <div className="text-muted-foreground text-xs mt-1">
           <span className="text-amber-600 dark:text-amber-400">{account.rejectedReason}</span>
           {account.status === "REJECTED" && (
             <Button

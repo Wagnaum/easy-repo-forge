@@ -1,8 +1,7 @@
 import { useAuth } from "@/hooks/auth";
 import { Navigate, Outlet, useLocation, Link } from "@tanstack/react-router";
-import { CircleUser, Menu, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { Menu, LogOut } from "lucide-react";
+import { motion } from "framer-motion";
 
 import {
   DropdownMenu,

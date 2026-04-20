@@ -1,0 +1,184 @@
+{
+  "customers": [
+    {
+      "id": "8a1713f0-9aa6-4fc0-ad70-6f2ca6d5ee93",
+      "ref": "distritopay",
+      "host": "localhost",
+      "name": "Distrito Pay",
+      "logo": {
+        "white": "/logos/clients/distritopay/logo-white.svg",
+        "dark": "/logos/clients/distritopay/logo-dark.svg",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#000000"
+      }
+    },
+    {
+      "id": "9ccf1002-c377-46f2-96d5-c50029e49f13",
+      "ref": "greenpay",
+      "host": "greenpay.digital",
+      "name": "Green Pay",
+      "logo": {
+        "white": "/logos/clients/greenpay/logo-dark.png",
+        "dark": "/logos/clients/greenpay/logo-white.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#000000"
+      }
+    },
+    {
+      "id": "8a1713f0-9aa6-4fc0-ad70-6f2ca6d5ee93",
+      "ref": "distritopay",
+      "host": "distritopay.com",
+      "name": "Distrito Pay",
+      "logo": {
+        "white": "/logos/clients/distritopay/logo-white.svg",
+        "dark": "/logos/clients/distritopay/logo-dark.svg",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#000000"
+      }
+    },
+    {
+      "id": "801c8253-895d-4cd3-b8f3-dc189e82ac84",
+      "ref": "hmpay",
+      "host": "hmpay.com.br",
+      "name": "HM pay",
+      "logo": {
+        "white": "/logos/clients/hmpay/logo-white.png",
+        "dark": "/logos/clients/hmpay/logo-dark.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#000000"
+      }
+    },
+    {
+      "id": "ff78c1bb-0f76-4868-9052-1ead9e22328d",
+      "ref": "pgbank",
+      "host": "pg.investban.com.br",
+      "name": "PG Bank",
+      "logo": {
+        "white": "/logos/clients/pgbank/logo-white.png",
+        "dark": "/logos/clients/pgbank/logo-dark.png",
+        "login": "/logos/clients/pgbank/invest-login.png"
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#000000"
+      }
+    },
+    {
+      "id": "f6172139-f7de-433d-a64f-8554b741115a",
+      "ref": "investban",
+      "host": "investban.com.br",
+      "name": "Invest Ban",
+      "logo": {
+        "white": "/logos/clients/investban/logo-white.png",
+        "dark": "/logos/clients/investban/logo-dark.png",
+        "login": "/logos/clients/investban/invest-login.png"
+      },
+      "colors": {
+        "loginBackground": "#000000",
+        "buttonBackground": "#000000"
+      }
+    },
+    {
+      "id": "cf8ffd74-634a-4009-8643-7b5c743b2534",
+      "ref": "mourainvest",
+      "host": "mourainvest.com.br",
+      "name": "Moura Invest",
+      "logo": {
+        "white": "/logos/clients/mourainvest/logo-white.png",
+        "dark": "/logos/clients/mourainvest/logo-white.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#000000"
+      }
+    },
+    {
+      "id": "31384ad7-e399-4476-9ea6-53bc8954c2e5",
+      "ref": "secretbank",
+      "host": "secretbank.com.br",
+      "name": "Secret Bank",
+      "logo": {
+        "white": "/logos/clients/secretbank/secret-bank.png",
+        "dark": "/logos/clients/secretbank/secret-bank.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#000000"
+      }
+    },
+    {
+      "id": "4b1feea3-62ef-4592-8264-b3e3ec7b3686",
+      "ref": "sempre-green",
+      "host": "sempregreenbank.com.br",
+      "name": "Sempre Green",
+      "logo": {
+        "white": "/logos/clients/sempregreen/logo-white.png",
+        "dark": "/logos/clients/sempregreen/logo-dark.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#008000"
+      }
+    },
+    {
+      "id": "104cfbf6-2d52-41c8-aa4e-77962744a842",
+      "ref": "fast-bank",
+      "host": "fastbank.digital",
+      "name": "Fast Bank",
+      "logo": {
+        "white": "/logos/clients/fastbank/logo-white.png",
+        "dark": "/logos/clients/fastbank/logo-dark.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#008000"
+      }
+    },
+    {
+      "id": "8c728a9d-d988-49b8-be8c-de08f89621ed",
+      "ref": "hero-bank",
+      "host": "bet.herobank.com.br",
+      "name": "Hero Bank",
+      "logo": {
+        "white": "/logos/clients/hero/logo-white.png",
+        "dark": "/logos/clients/hero/logo-dark.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#008000"
+      }
+    },
+    {
+      "id": "03673c92-72f9-4cec-bc18-a38d0a676b04",
+      "ref": "dolar-bank",
+      "host": "dolar.herobank.com.br",
+      "name": "Dóilar Bank",
+      "logo": {
+        "white": "/logos/clients/dolarbank/logo-white.png",
+        "dark": "/logos/clients/dolarbank/logo-dark.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#f3f3f3",
+        "buttonBackground": "#008000"
+      }
+    }
+  ]
+}

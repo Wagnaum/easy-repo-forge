@@ -19,7 +19,7 @@ interface AccountTableRowProps {
   index?: number;
 }
 
-export function AccountTableRow({ account, refetch }: AccountTableRowProps) {
+export function AccountTableRow({ account, refetch, index = 0 }: AccountTableRowProps) {
   async function handleRetry(id: string) {
     console.log("oldId", id);
     await api
@@ -34,7 +34,12 @@ export function AccountTableRow({ account, refetch }: AccountTableRowProps) {
   }
 
   return (
-    <TableRow className="">
+    <motion.tr
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.03, duration: 0.2 }}
+      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+    >
       <TableCell className="text-muted-foreground">
         {formatDistanceToNow(account.createdAt, {
           locale: ptBR,
@@ -55,56 +60,26 @@ export function AccountTableRow({ account, refetch }: AccountTableRowProps) {
             <span className="text-sm text-muted-foreground">
               {account?.user?.name}
             </span>
-            {/* <div className="flex items-center ">
-              {account.type === "BET" ? (
-                <span
-                  data-testid="badge"
-                  className="h-2 w-2 rounded-full bg-green-600"
-                />
-              ) : (
-                <span
-                  data-testid="badge"
-                  className="h-2 w-2 rounded-full bg-yellow-600"
-                />
-              )}
-            </div> */}
           </span>
-          {/* <div className="text-muted-foreground text-xs">
-            {account.type === "BET" ? (
-              <span className="text-green-800">Bet</span>
-            ) : (
-              <span className="text-yellow-600">Normal</span>
-            )}
-          </div> */}
         </div>
       </TableCell>
       <TableCell>
-        <span>{formatDocument(account.document)}</span>
+        <span className="font-mono text-xs">{formatDocument(account.document)}</span>
       </TableCell>
       <TableCell className="text-center">
         {numberToCurrent(account.user.fee)}
       </TableCell>
-      <TableCell className="text-center">
+      <TableCell className="text-center font-medium">
         {account.id === "1fff7d44-7a88-4e9a-aca4-2340c86cae6f" ? (
           <span>{numberToCurrent(account.balance / 2)}</span>
         ) : (
           <span>{numberToCurrent(account.balance)}</span>
         )}
       </TableCell>
-      {/* <TableCell className="text-center">
-        {account.type === "BET" ? (
-          <span>{numberToCurrent(account.withdrawFree)}</span>
-        ) : (
-          "-"
-        )}
-      </TableCell> */}
-      {/* <TableCell className="text-center">
-        <span>{account.countAccounts > 0 ? account.countAccounts : "-"}</span>
-      </TableCell> */}
-      <TableCell className="">
+      <TableCell>
         <span>{FormatAccountStatus(account.status)}</span>
         <div className="text-muted-foreground text-xs">
-          <span className="text-yellow-600">{account.rejectedReason}</span>
+          <span className="text-amber-600 dark:text-amber-400">{account.rejectedReason}</span>
           {account.status === "REJECTED" && (
             <Button
               variant="ghost"
@@ -127,8 +102,8 @@ export function AccountTableRow({ account, refetch }: AccountTableRowProps) {
         </div>
       </TableCell>
       <TableCell>
-        <Button variant="ghost" size="sm">
-          {account.status === "APPROVED" && (
+        {account.status === "APPROVED" && (
+          <Button asChild variant="ghost" size="sm">
             <Link
               to={`/accounts/${account.id}` as any}
               className="flex items-center text-sm"
@@ -136,25 +111,25 @@ export function AccountTableRow({ account, refetch }: AccountTableRowProps) {
               <ArrowRight className="mr-2 h-3 w-3" />
               Visualizar
             </Link>
-          )}
+          </Button>
+        )}
 
-          {account.status !== "APPROVED" && (
-            <span>
-              <CopyToClipboard
-                text={`${window.location.protocol}//${window.location.host}/auth/account/register?inviteId=${account.id}`}
-                onCopy={() => {
-                  toast.success(
-                    "Link do convite copiado com sucesso.",
-                    toastStyle.success
-                  );
-                }}
-              >
-                <Copy className="w-4 h-4 cursor-pointer" />
-              </CopyToClipboard>
-            </span>
-          )}
-        </Button>
+        {account.status !== "APPROVED" && (
+          <CopyToClipboard
+            text={`${window.location.protocol}//${window.location.host}/auth/account/register?inviteId=${account.id}`}
+            onCopy={() => {
+              toast.success(
+                "Link do convite copiado com sucesso.",
+                toastStyle.success
+              );
+            }}
+          >
+            <Button variant="ghost" size="sm" aria-label="Copiar link de convite">
+              <Copy className="w-4 h-4" />
+            </Button>
+          </CopyToClipboard>
+        )}
       </TableCell>
-    </TableRow>
+    </motion.tr>
   );
 }

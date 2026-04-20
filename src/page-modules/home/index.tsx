@@ -1,7 +1,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { KPICard } from "@/components/shared/kpi-card";
 
-import { CalendarIcon, CreditCard, DollarSign, Users } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, CalendarIcon, CreditCard, DollarSign, Users, Wallet } from "lucide-react";
 
 import { ChartAccount } from "./chart-account";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -228,6 +228,39 @@ export function HomePage() {
           </>
         )}
       </div>
+
+      {(user.role === "SUPER_ADMIN" || user.role === "ADMIN") && !isLoadingWithdraw && withdraw?.withdraw && (
+        <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
+          <KPICard
+            title="Saldo total"
+            value={numberToCurrent(withdraw.withdraw.totalGeneralAmount ?? 0)}
+            subtitle="Movimentação geral"
+            index={0}
+            icon={<Wallet className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
+          />
+          <KPICard
+            title="Entradas"
+            value={numberToCurrent(withdraw.withdraw.totalNormalAmount ?? 0)}
+            subtitle="Saques cobrados"
+            index={1}
+            icon={<ArrowDownCircle className="h-5 w-5" style={{ color: "var(--brand-accent-dark)" }} />}
+          />
+          <KPICard
+            title="Saídas"
+            value={numberToCurrent(withdraw.withdraw.totalFreeAmount ?? 0)}
+            subtitle="Saques taxa zero"
+            index={2}
+            icon={<ArrowUpCircle className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
+          />
+          <KPICard
+            title="Total de contas"
+            value={(accounts?.accounts?.numberOfAccounts ?? 0).toLocaleString("pt-BR")}
+            subtitle="No período do gráfico"
+            index={3}
+            icon={<Users className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
+          />
+        </div>
+      )}
 
       <div>
         <Popover

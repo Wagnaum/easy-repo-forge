@@ -166,41 +166,46 @@ export function UsersPage() {
 
   return (
     <>
-      <h1>Usuários</h1>
+      <div>
+        <h1 className="text-2xl font-bold">Usuários</h1>
+        <p className="text-sm text-muted-foreground">Gerencie os usuários da plataforma</p>
+      </div>
       <UserTableFilters refetch={refetch} />
-      {/* <Separator /> */}
-      <Table>
-        <TableHeader>
-          <TableRow className={cn(isLoadingUsers && "hidden")}>
-            <TableHead className="w-[130px]">Cadastrado há</TableHead>
-            <TableHead className="w-[200px]">Nome</TableHead>
-            <TableHead className="w-[140px]">CPF</TableHead>
-            <TableHead className="w-[140px]">Tipo</TableHead>
-            <TableHead className="w-[140px] text-center">Taxa</TableHead>
-            <TableHead className="w-[200px]">Status</TableHead>
-            <TableHead className="w-[90px]"></TableHead>
-          </TableRow>
-        </TableHeader>
+      <div className="rounded-xl border bg-card overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className={cn(isLoadingUsers && "hidden")}>
+              <TableHead className="w-[130px]">Cadastrado há</TableHead>
+              <TableHead className="w-[200px]">Nome</TableHead>
+              <TableHead className="w-[140px]">CPF</TableHead>
+              <TableHead className="w-[140px]">Tipo</TableHead>
+              <TableHead className="w-[140px] text-center">Taxa</TableHead>
+              <TableHead className="w-[200px]">Status</TableHead>
+              <TableHead className="w-[90px]"></TableHead>
+            </TableRow>
+          </TableHeader>
 
-        <TableBody>
-          {result &&
-            result?.data.map((user) => {
-              return (
-                <UserTableRow
-                  key={user.id}
-                  user={user}
-                  permissionForcedPreApproved={
-                    userLogged?.role === "SUPER_ADMIN"
-                  }
-                  onStatusChange={handleStatusChange}
-                  isPending={user?.isLoading && isPending}
-                  refetch={refetch}
-                />
-              );
-            })}
-          {isLoadingUsers && <UserTableSkeleton />}
-        </TableBody>
-      </Table>
+          <TableBody>
+            {result &&
+              result?.data.map((user, idx) => {
+                return (
+                  <UserTableRow
+                    key={user.id}
+                    user={user}
+                    permissionForcedPreApproved={
+                      userLogged?.role === "SUPER_ADMIN"
+                    }
+                    onStatusChange={handleStatusChange}
+                    isPending={user?.isLoading && isPending}
+                    refetch={refetch}
+                    index={idx}
+                  />
+                );
+              })}
+            {isLoadingUsers && <UserTableSkeleton />}
+          </TableBody>
+        </Table>
+      </div>
 
       {result && result?.pagination?.totalPages > 1 && (
         <Pagination

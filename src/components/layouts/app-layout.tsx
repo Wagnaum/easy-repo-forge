@@ -29,11 +29,7 @@ export function AppLayout() {
   const { user, logout } = useAuth();
   const location = useLocation();
   const { customer } = useCustomer();
-  const [path, setPath] = useState<string>(location.pathname);
-
-  useEffect(() => {
-    setPath(location.pathname);
-  }, [location]);
+  const path = location.pathname;
 
   if (!user) {
     return <Navigate to={"/auth/login" as any} />;

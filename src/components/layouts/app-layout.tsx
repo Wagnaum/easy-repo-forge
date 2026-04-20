@@ -1,7 +1,8 @@
 import { useAuth } from "@/hooks/auth";
-import { Navigate, Outlet, useLocation } from "@tanstack/react-router";
-import { CircleUser, Menu } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Navigate, Outlet, useLocation, Link } from "@tanstack/react-router";
+import { CircleUser, Menu, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import {
   DropdownMenu,
@@ -11,299 +12,209 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { FormatRole } from "@/utils/format-role";
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useCustomer } from "@/hooks/customer";
-// import { Badge } from "../ui/badge";
-// import { useQuery } from "@tanstack/react-query";
-// import { getZeroRate, GetZeroRatesResponse } from "@/api/get-zero-rate";
+import { ThemeToggle } from "@/components/theme-toggle";
+
+const navItems = [
+  { label: "Dashboard", path: "/" },
+  { label: "Cadastros", path: "/users" },
+  { label: "Contas", path: "/accounts" },
+];
 
 export function AppLayout() {
   const { user, logout } = useAuth();
   const location = useLocation();
-
-  const [path, setPath] = useState<string>(location.pathname);
-
   const { customer } = useCustomer();
+  const [path, setPath] = useState<string>(location.pathname);
 
   useEffect(() => {
     setPath(location.pathname);
   }, [location]);
 
-  // const canFetchZeroRates = user?.role === "SUPER_ADMIN" || false;
-
-  // const { data } = useQuery<GetZeroRatesResponse>({
-  //   queryKey: ["zerorate:backoffice"],
-  //   enabled: canFetchZeroRates,
-  //   queryFn: () =>
-  //     getZeroRate({
-  //       pageIndex: 0,
-  //       type: "FREE",
-  //       status: "WAITING_ANALYSIS",
-  //     }),
-  //   refetchInterval: 1000 * 30, // 30 seconds
-  // });
-
-  // This layout is used in protected routes
   if (!user) {
     return <Navigate to={"/auth/login" as any} />;
   }
 
-  // const hasPendingZeroRatesLess10 =
-  //   data?.data?.length && data.data.length > 0 && data.data.length < 10;
+  const initials = (user.name ?? "U")
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
-  // const hasPendingZeroRatesMore10 =
-  //   data?.data?.length && data.data.length >= 10;
-
-  function handleLogout() {
-    logout();
-  }
+  const isActive = (p: string) =>
+    p === "/" ? path === "/" : path.startsWith(p);
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 flex h-20 items-center gap-4 border-b bg-background px-4 md:px-6">
-        <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6 w-full">
-          <Link
-            to={"#" as any}
-            className="flex items-center gap-2 text-lg font-semibold md:text-base"
-          >
-            {customer.name === "Invest Ban" ? (
-              <img
-                className="mx-auto"
-                src={customer.logo.dark}
-                alt={customer.name}
-                width={190}
-              />
-            ) : (
-              <>
-                {customer.name === "PG Bank" ? (
-                  <img
-                    className="mx-auto"
-                    src={customer.logo.dark}
-                    alt={customer.name}
-                    width={200}
-                  />
-                ) : (
-                  <img
-                    className="mx-auto h-16 w-auto"
-                    src={customer.logo.dark}
-                    alt={customer.name}
-                  />
-                )}
-              </>
-            )}
-            <span className="sr-only">Hero Bank</span>
-          </Link>
-          <Link
-            to="/"
-            className={cn(
-              "transition-colors hover:text-foreground",
-              path === "/" ? "text-foreground" : "text-muted-foreground"
-            )}
-          >
-            Dashboard
-          </Link>
-          <Link
-            to={"/users" as any}
-            className={cn(
-              "transition-colors hover:text-foreground",
-              path.includes("/users")
-                ? "text-foreground"
-                : "text-muted-foreground"
-            )}
-          >
-            Cadastros
-          </Link>
-          <Link
-            to={"/accounts" as any}
-            className={cn(
-              "transition-colors hover:text-foreground",
-              path.includes("/accounts")
-                ? "text-foreground"
-                : "text-muted-foreground"
-            )}
-          >
-            Contas
-          </Link>
-          {/* {user.role === "SUPER_ADMIN" && (
-            <Link
-              to="/zero-rate"
-              className={cn(
-                "transition-colors hover:text-foreground",
-                path.includes("/zero-rate")
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              )}
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 lg:px-8">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2">
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white"
+              style={{ backgroundColor: "var(--brand-primary)" }}
             >
-              Taxa Zero
-              {hasPendingZeroRatesLess10 ? (
-                <Badge variant="notification">{data?.data?.length}</Badge>
-              ) : null}
-              {hasPendingZeroRatesMore10 ? (
-                <Badge variant="notification" className="w-6 h-6">
-                  9+
-                </Badge>
-              ) : null}
-            </Link>
-          )} */}
-          {/* <Link
-            to="/gateways"
-            className={cn(
-              "transition-colors hover:text-foreground",
-              path.includes("/gateways")
-                ? "text-foreground"
-                : "text-muted-foreground"
-            )}
-          >
-            Gateways
-          </Link> */}
-          {/* <Link
-            to="#"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Configurações
-          </Link> */}
-        </nav>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="shrink-0 md:hidden"
-            >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-            <nav className="grid gap-6 text-lg font-medium">
-              <Link
-                to="/"
-                className="flex items-center gap-2 text-lg font-semibold"
-              >
-                <img
-                  className="h-16 w-auto"
-                  src={customer.logo.dark}
-                  alt="Hero Bank"
-                />
-                <span className="sr-only">Hero Bank</span>
-              </Link>
-              <Link
-                to="/"
-                className={cn(
-                  "transition-colors hover:text-foreground",
-                  path === "/" ? "text-foreground" : "text-muted-foreground"
-                )}
-              >
-                Dashboard
-              </Link>
-              <Link
-                to={"/users" as any}
-                className={cn(
-                  "transition-colors hover:text-foreground",
-                  path.includes("/users")
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                )}
-              >
-                Cadastros
-              </Link>
-              <Link
-                to={"/accounts" as any}
-                className={cn(
-                  "transition-colors hover:text-foreground",
-                  path.includes("/accounts")
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                )}
-              >
-                Contas
-              </Link>
-              {/* {user.role === "SUPER_ADMIN" && (
+              {customer?.name?.charAt(0) ?? "P"}
+            </div>
+            <span className="text-lg font-bold text-foreground">
+              {customer?.name ?? "Plataforma"}
+            </span>
+          </Link>
+
+          {/* Desktop Nav */}
+          <nav className="hidden items-center gap-1 md:flex">
+            {navItems.map((item) => {
+              const active = isActive(item.path);
+              return (
                 <Link
-                  to="/zero-rate"
+                  key={item.path}
+                  to={item.path as any}
                   className={cn(
-                    "transition-colors hover:text-foreground",
-                    path.includes("/zero-rate")
+                    "relative px-4 py-2 text-sm font-medium transition-colors",
+                    active
                       ? "text-foreground"
-                      : "text-muted-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  Taxa Zero
-                  {hasPendingZeroRatesLess10 ? (
-                    <Badge variant="notification">{data?.data?.length}</Badge>
-                  ) : null}
-                  {hasPendingZeroRatesMore10 ? (
-                    <Badge variant="notification" className="w-6 h-6">
-                      9+
-                    </Badge>
-                  ) : null}
+                  {item.label}
+                  {active && (
+                    <motion.div
+                      layoutId="navbar-indicator"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                    />
+                  )}
                 </Link>
-              )} */}
-              {/* <Link
-                to="/gateways"
-                className={cn(
-                  "transition-colors hover:text-foreground",
-                  path.includes("/gateways")
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                )}
-              >
-                Gateways
-              </Link> */}
-            </nav>
-          </SheetContent>
-        </Sheet>
-        <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-          <div className="ml-auto flex-1 sm:flex-initial">
-            {/* <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search products..."
-                className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-              />
-            </div> */}
-          </div>
-          <div />
-          <div className="flex flex-col">
-            <span className="text-sm">{user.name?.split(" ")[0]}</span>
-            <span className="text-muted-foreground text-xs">
-              {FormatRole(user.role)}
-            </span>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel className="flex flex-col gap-1">
-                <span className="text-sm font-medium">{user.name}</span>
-                <span className="text-xs text-muted-foreground">
+              );
+            })}
+          </nav>
+
+          {/* Right side */}
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+
+            <div className="hidden items-center gap-2 md:flex">
+              <div className="text-right">
+                <p className="text-sm font-medium leading-none text-foreground">
+                  {user.name?.split(" ")[0]}
+                </p>
+                <p className="text-xs text-muted-foreground">
                   {FormatRole(user.role)}
-                </span>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}
-              {/* <DropdownMenuItem>Support</DropdownMenuItem> */}
-              {/* <DropdownMenuSeparator /> */}
-              <DropdownMenuItem onClick={handleLogout}>Sair</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                </p>
+              </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="rounded-full focus:outline-none focus:ring-2 focus:ring-ring"
+                    aria-label="Abrir menu do usuário"
+                  >
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback
+                        className="text-xs font-semibold text-white"
+                        style={{ backgroundColor: "var(--brand-primary)" }}
+                      >
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel className="flex flex-col gap-1">
+                    <span className="text-sm font-medium">{user.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {FormatRole(user.role)}
+                    </span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => logout()}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sair
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Mobile menu */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72">
+                <nav className="mt-6 flex flex-col gap-1">
+                  {navItems.map((item) => {
+                    const active = isActive(item.path);
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path as any}
+                        className={cn(
+                          "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+                          active
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </nav>
+
+                <div className="mt-6 flex items-center gap-3 border-t pt-4">
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback
+                      className="text-xs font-semibold text-white"
+                      style={{ backgroundColor: "var(--brand-primary)" }}
+                    >
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium leading-none">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {FormatRole(user.role)}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => logout()}
+                    aria-label="Sair"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <Outlet />
-      </main>
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={location.pathname}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.28, ease: "easeOut" }}
+          className="mx-auto max-w-[1400px] px-4 py-6 lg:px-8"
+        >
+          <Outlet />
+        </motion.main>
+      </AnimatePresence>
     </div>
   );
 }

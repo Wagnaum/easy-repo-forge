@@ -30,6 +30,7 @@ import { Enable2fa } from "./enable2fa";
 import { useCustomer } from "@/hooks/customer";
 import { api } from "@/lib/api";
 import { useIsOwem } from "@/hooks/is-owem";
+import { numberToCurrent } from "@/utils/format";
 
 export function HomePage() {
   const { user } = useAuth();

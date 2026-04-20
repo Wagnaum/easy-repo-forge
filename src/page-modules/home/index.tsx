@@ -203,7 +203,7 @@ export function HomePage() {
             />
             <KPICard
               title="Contas Pagas"
-              value={withdraw?.withdraw?.totalNormalAmount ?? 0}
+              value={numberToCurrent(withdraw?.withdraw?.totalNormalAmount ?? 0)}
               subtitle="Saques cobrados"
               index={1}
               icon={

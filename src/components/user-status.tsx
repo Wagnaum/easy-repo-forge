@@ -1,4 +1,4 @@
-import { UserStatus } from "@/pages/users/types";
+import { UserStatus } from "@/page-modules/users/types";
 
 interface UserStatusProps {
   status: UserStatus;

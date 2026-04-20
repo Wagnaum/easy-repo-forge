@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { customers } from "../../customers.json";
+import { customers } from "@/config/customers.json";
 import { api } from "@/lib/api";
 
 export type Customer = {

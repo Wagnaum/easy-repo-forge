@@ -1,8 +1,8 @@
 import { useAuth } from "@/hooks/auth";
-import { Outlet, useLocation, Link } from "@tanstack/react-router";
+import { Outlet, useLocation, Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, LogOut, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -20,9 +20,19 @@ const navItems = [
 export function AppLayout() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { customer } = useCustomer();
   const path = location.pathname;
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user && typeof window !== "undefined") {
+      const token = window.localStorage.getItem("@herobank:token");
+      if (!token || token === "undefined" || token === "null") {
+        navigate({ to: "/auth/login" });
+      }
+    }
+  }, [user, navigate]);
 
   if (!user) {
     return (

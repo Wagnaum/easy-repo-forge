@@ -1,7 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AccountsPage } from "@/page-modules/accounts";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app/accounts")({
-  head: () => ({ meta: [{ title: "Contas" }] }),
-  component: AccountsPage,
+  component: AccountsLayout,
 });
+
+function AccountsLayout() {
+  return <Outlet />;
+}

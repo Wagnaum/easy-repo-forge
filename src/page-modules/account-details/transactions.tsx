@@ -33,7 +33,8 @@ interface TransactionsAccountProps {
 
 export function TransactionsAccount({ accountId }: TransactionsAccountProps) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const pageIndex = z.coerce.number().parse(searchParams.get("page") ?? 0);
+  const pageParam = searchParams.get("page");
+  const pageIndex = Number.isFinite(Number(pageParam)) ? Number(pageParam) : 0;
 
   const { data: result, isLoading } = useQuery<GetTransactionsResponse>({
     queryKey: ["accounts:transactions", accountId, pageIndex],

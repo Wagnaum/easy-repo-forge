@@ -229,6 +229,7 @@ export function LoginPage() {
       <p className="mt-6 text-center text-xs text-muted-foreground">
         {customer?.name ?? "Plataforma"} — Painel Administrativo
       </p>
-    </motion.div>
+      </motion.div>
+    </>
   );
 }

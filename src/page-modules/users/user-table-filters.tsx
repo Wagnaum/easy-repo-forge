@@ -280,7 +280,6 @@ export function UserTableFilters({ refetch }: UserTableFiltersProps) {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
-              onClick={handleClearFilters}
               size="sm"
               type="button"
               className="ml-auto"

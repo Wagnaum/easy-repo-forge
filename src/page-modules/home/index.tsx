@@ -6,6 +6,7 @@ import { ArrowDownCircle, ArrowUpCircle, CalendarIcon, Wallet } from "lucide-rea
 import { ChartAccount } from "./chart-account";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TotalAccounts } from "./total-account";
+import { TransactionsCard } from "./transactions-card";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
 import {

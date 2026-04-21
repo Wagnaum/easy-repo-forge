@@ -1,22 +1,28 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "@tanstack/react-router";
+import { useLocation, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { LottieLoader } from "./lottie-loader";
 
 const MIN_DURATION_MS = 2000;
 
 /**
- * Exibe o LottieLoader como overlay fullscreen por no mínimo 2s
- * sempre que a rota (pathname) muda.
+ * Exibe o LottieLoader como overlay fullscreen durante mudanças de rota.
+ * - Mantém visível por no mínimo 2s.
+ * - Se o carregamento da rota demorar mais que 2s, mantém até terminar.
+ * - Se terminar antes, espera completar os 2s mínimos.
  */
 export function RouteTransitionLoader() {
   const location = useLocation();
+  const isLoading = useRouterState({ select: (s) => s.isLoading });
+
   const [visible, setVisible] = useState(false);
   const isFirstRender = useRef(true);
   const lastPath = useRef(location.pathname);
+  const startedAt = useRef<number | null>(null);
+  const hideTimer = useRef<number | null>(null);
 
+  // Dispara o loader quando o pathname muda
   useEffect(() => {
-    // Não exibe no primeiro render (carregamento inicial da app)
     if (isFirstRender.current) {
       isFirstRender.current = false;
       lastPath.current = location.pathname;
@@ -26,10 +32,36 @@ export function RouteTransitionLoader() {
     if (location.pathname === lastPath.current) return;
     lastPath.current = location.pathname;
 
+    if (hideTimer.current) {
+      window.clearTimeout(hideTimer.current);
+      hideTimer.current = null;
+    }
+    startedAt.current = Date.now();
     setVisible(true);
-    const timer = window.setTimeout(() => setVisible(false), MIN_DURATION_MS);
-    return () => window.clearTimeout(timer);
   }, [location.pathname]);
+
+  // Esconde o loader respeitando o mínimo de 2s, mas só após o carregamento terminar
+  useEffect(() => {
+    if (!visible) return;
+    if (isLoading) return; // ainda carregando — mantém visível
+    if (startedAt.current === null) return;
+
+    const elapsed = Date.now() - startedAt.current;
+    const remaining = Math.max(0, MIN_DURATION_MS - elapsed);
+
+    hideTimer.current = window.setTimeout(() => {
+      setVisible(false);
+      startedAt.current = null;
+      hideTimer.current = null;
+    }, remaining);
+
+    return () => {
+      if (hideTimer.current) {
+        window.clearTimeout(hideTimer.current);
+        hideTimer.current = null;
+      }
+    };
+  }, [visible, isLoading]);
 
   return (
     <AnimatePresence>

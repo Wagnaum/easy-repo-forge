@@ -24,7 +24,6 @@ import { numberToCurrent } from "@/utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { useSearchParams } from "@/lib/use-search-params";
-import { z } from "zod";
 import { TransactionsSkeleton } from "./transactions-skeleton";
 
 interface TransactionsAccountProps {

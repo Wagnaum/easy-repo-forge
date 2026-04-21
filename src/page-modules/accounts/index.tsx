@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/table";
 
 import { useSearchParams } from "@/lib/use-search-params";
-import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { Pagination } from "@/components/pagination";
 import { getAccounts, GetAccountsResponse } from "@/api/get-accounts";

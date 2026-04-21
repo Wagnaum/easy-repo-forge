@@ -349,7 +349,7 @@ export function UserTableRow({
               </Dialog>
 
               {userLogged?.role === "SUPER_ADMIN" && (
-                <Link to={`/users/${user.id}` as any}>
+                <Link to="/users/$id" params={{ id: user.id }}>
                   <Button variant="ghost" size="default">
                     <ArrowRight className="mr-2 h-3 w-3" />
                     Detalhes

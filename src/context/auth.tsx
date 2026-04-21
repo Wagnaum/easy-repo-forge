@@ -90,7 +90,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       const { data } = await api.get("/users");
       setUser(data.user);
     } catch {
-      // logout();
+      localStorage.removeItem("@herobank:token");
+      api.defaults.headers.common.Authorization = "";
+      setUser(null);
     }
   };
 
@@ -107,6 +109,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       if (token && token != "undefined" && token != "null") {
         api.defaults.headers.common.Authorization = `Bearer ${token}`;
         await refreshUser();
+      } else {
+        setUser(null);
       }
       setLoading(false);
     };

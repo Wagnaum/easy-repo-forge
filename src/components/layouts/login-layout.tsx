@@ -1,29 +1,9 @@
-import { useAuth } from "@/hooks/auth";
 import { Outlet } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useCustomer } from "@/hooks/customer";
-import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
-import { useNavigate } from "@/lib/use-navigate";
 
 export function LoginLayout() {
-  const { user } = useAuth();
   const { customer } = useCustomer();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user) {
-      navigate("/", { replace: true });
-    }
-  }, [navigate, user]);
-
-  if (user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">

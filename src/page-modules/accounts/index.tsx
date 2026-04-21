@@ -8,12 +8,11 @@ import {
 } from "@/components/ui/table";
 
 import { useSearchParams } from "@/lib/use-search-params";
-import { cn } from "@/lib/utils";
 import { Pagination } from "@/components/pagination";
 import { getAccounts, GetAccountsResponse } from "@/api/get-accounts";
 import { AccountTableRow } from "./account-table-row";
 import { AccountTableFilters } from "./account-table-filters";
-import { AccountTableSkeleton } from "./account-table-skeleton";
+import { LottieLoader } from "@/components/shared/lottie-loader";
 
 export interface UpdateUserProps {
   id: string;
@@ -66,27 +65,29 @@ export function AccountsPage() {
       </div>
       <AccountTableFilters refetch={refetch} />
       <div className="rounded-xl border bg-card overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className={cn(isLoading && "hidden")}>
-              <TableHead className="w-[130px]">Criada há</TableHead>
-              <TableHead className="w-[200px]">Nome</TableHead>
-              <TableHead className="w-[140px]">CPF</TableHead>
-              <TableHead className="w-[140px] text-center">Taxa</TableHead>
-              <TableHead className="w-[140px] text-center">Saldo</TableHead>
-              <TableHead className="w-[100px]">Status</TableHead>
-              <TableHead className="w-[90px]"></TableHead>
-            </TableRow>
-          </TableHeader>
+        {isLoading ? (
+          <LottieLoader inline size={120} label="Carregando contas..." />
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[130px]">Criada há</TableHead>
+                <TableHead className="w-[200px]">Nome</TableHead>
+                <TableHead className="w-[140px]">CPF</TableHead>
+                <TableHead className="w-[140px] text-center">Taxa</TableHead>
+                <TableHead className="w-[140px] text-center">Saldo</TableHead>
+                <TableHead className="w-[100px]">Status</TableHead>
+                <TableHead className="w-[90px]"></TableHead>
+              </TableRow>
+            </TableHeader>
 
-          <TableBody>
-            {result &&
-              result?.data.map((account, idx) => {
-                return <AccountTableRow key={account.id} account={account} refetch={refetch} index={idx} />;
-              })}
-            {isLoading && <AccountTableSkeleton />}
-          </TableBody>
-        </Table>
+            <TableBody>
+              {result?.data.map((account, idx) => (
+                <AccountTableRow key={account.id} account={account} refetch={refetch} index={idx} />
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       {result && result?.pagination?.totalPages > 1 && (

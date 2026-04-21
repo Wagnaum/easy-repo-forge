@@ -1,8 +1,8 @@
 import { useAuth } from "@/hooks/auth";
-import { Outlet, useLocation, Link } from "@tanstack/react-router";
+import { Outlet, useLocation, Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, LogOut, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

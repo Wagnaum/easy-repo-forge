@@ -5,6 +5,7 @@ import { ArrowDownCircle, ArrowUpCircle, CalendarIcon, Wallet } from "lucide-rea
 
 import { ChartAccount } from "./chart-account";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LottieLoader } from "@/components/shared/lottie-loader";
 import { TotalAccounts } from "./total-account";
 import { TransactionsCard } from "./transactions-card";
 import { DateRange } from "react-day-picker";
@@ -184,11 +185,9 @@ export function HomePage() {
       {(user.role === "SUPER_ADMIN" || user.role === "ADMIN") && (
         <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
           {isLoadingWithdraw ? (
-            <>
-              <Skeleton className="h-28 w-full rounded-xl" />
-              <Skeleton className="h-28 w-full rounded-xl" />
-              <Skeleton className="h-28 w-full rounded-xl" />
-            </>
+            <div className="md:col-span-2 lg:col-span-3">
+              <LottieLoader inline size={110} label="Carregando indicadores..." />
+            </div>
           ) : (
             <>
               <KPICard

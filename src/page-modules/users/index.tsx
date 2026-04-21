@@ -10,15 +10,14 @@ import {
 import { useSearchParams } from "@/lib/use-search-params";
 
 import { useAuth } from "@/hooks/auth";
-import { cn } from "@/lib/utils";
 import { getUsers, GetUsersResponse } from "@/api/get-users";
 import { UserTableFilters } from "./user-table-filters";
 import { Pagination } from "@/components/pagination";
-import { UserTableSkeleton } from "./user-table-skeleton";
 import { UserTableRow } from "./user-table-row";
 import { updateUser } from "@/api/update-user";
 import { toastStyle } from "@/utils/toast-style";
 import toast from "react-hot-toast";
+import { LottieLoader } from "@/components/shared/lottie-loader";
 
 export interface UpdateUserProps {
   id: string;
@@ -173,39 +172,39 @@ export function UsersPage() {
       </div>
       <UserTableFilters refetch={refetch} />
       <div className="rounded-xl border bg-card overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className={cn(isLoadingUsers && "hidden")}>
-              <TableHead className="w-[130px]">Cadastrado há</TableHead>
-              <TableHead className="w-[200px]">Nome</TableHead>
-              <TableHead className="w-[140px]">CPF</TableHead>
-              <TableHead className="w-[140px]">Tipo</TableHead>
-              <TableHead className="w-[140px] text-center">Taxa</TableHead>
-              <TableHead className="w-[200px]">Status</TableHead>
-              <TableHead className="w-[90px]"></TableHead>
-            </TableRow>
-          </TableHeader>
+        {isLoadingUsers ? (
+          <LottieLoader inline size={120} label="Carregando usuários..." />
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[130px]">Cadastrado há</TableHead>
+                <TableHead className="w-[200px]">Nome</TableHead>
+                <TableHead className="w-[140px]">CPF</TableHead>
+                <TableHead className="w-[140px]">Tipo</TableHead>
+                <TableHead className="w-[140px] text-center">Taxa</TableHead>
+                <TableHead className="w-[200px]">Status</TableHead>
+                <TableHead className="w-[90px]"></TableHead>
+              </TableRow>
+            </TableHeader>
 
-          <TableBody>
-            {result &&
-              result?.data.map((user, idx) => {
-                return (
-                  <UserTableRow
-                    key={user.id}
-                    user={user}
-                    permissionForcedPreApproved={
-                      userLogged?.role === "SUPER_ADMIN"
-                    }
-                    onStatusChange={handleStatusChange}
-                    isPending={user?.isLoading && isPending}
-                    refetch={refetch}
-                    index={idx}
-                  />
-                );
-              })}
-            {isLoadingUsers && <UserTableSkeleton />}
-          </TableBody>
-        </Table>
+            <TableBody>
+              {result?.data.map((user, idx) => (
+                <UserTableRow
+                  key={user.id}
+                  user={user}
+                  permissionForcedPreApproved={
+                    userLogged?.role === "SUPER_ADMIN"
+                  }
+                  onStatusChange={handleStatusChange}
+                  isPending={user?.isLoading && isPending}
+                  refetch={refetch}
+                  index={idx}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       {result && result?.pagination?.totalPages > 1 && (

@@ -38,6 +38,7 @@ import { api, parseError } from "@/lib/api";
 import { useAuth } from "@/hooks/auth";
 import { CopyButton } from "@/components/shared/copy-button";
 import { motion } from "framer-motion";
+import { LottieLoader } from "@/components/shared/lottie-loader";
 
 export function AccountDetailsPage() {
   const { id = "" } = useParams({ strict: false }) as { id: string };
@@ -264,11 +265,7 @@ export function AccountDetailsPage() {
                   {data ? (
                     <TransactionsAccount accountId={data.account.id} />
                   ) : (
-                    <div className="space-y-3">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                    </div>
+                    <LottieLoader inline size={110} label="Carregando transações..." />
                   )}
                 </TabsContent>
 

@@ -177,12 +177,10 @@ export function AccountTableFilters({ refetch }: AccountTableFiltersProps) {
               <SelectContent>
                 <SelectItem value="all">Todas as contas</SelectItem>
                 {Object.entries(statusOptions).map(([key, value]) => (
-                  <>
+                  <Fragment key={key}>
                     {key === "positiveBalance" && <Separator />}
-                    <SelectItem value={key} key={key}>
-                      {value}
-                    </SelectItem>
-                  </>
+                    <SelectItem value={key}>{value}</SelectItem>
+                  </Fragment>
                 ))}
               </SelectContent>
             </Select>

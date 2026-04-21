@@ -291,6 +291,25 @@ export function HomePage() {
         )}
       </div>
 
+      <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+        <TransactionsCard
+          title="Últimas transações"
+          subtitle="As 5 mais recentes no período"
+          orderBy="createdAt"
+          startAt={date?.from}
+          endAt={date?.to}
+          index={0}
+        />
+        <TransactionsCard
+          title="Maiores transações"
+          subtitle="Os 5 maiores valores no período"
+          orderBy="amount"
+          startAt={date?.from}
+          endAt={date?.to}
+          index={1}
+        />
+      </div>
+
       {/* <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-6">
         <div className="xl:col-span-6">
           {!isLoadingWithdraw && (

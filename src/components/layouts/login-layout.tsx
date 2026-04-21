@@ -7,7 +7,7 @@ export function LoginLayout() {
   const { customer } = useCustomer();
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen w-screen overflow-hidden bg-background">
       {/* Imagem - metade esquerda (oculta no mobile) */}
       <div className="relative hidden w-1/2 overflow-hidden lg:block">
         <img

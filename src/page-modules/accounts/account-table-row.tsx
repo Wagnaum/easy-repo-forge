@@ -106,7 +106,8 @@ export function AccountTableRow({ account, refetch, index = 0 }: AccountTableRow
         {account.status === "APPROVED" && (
           <Button asChild variant="ghost" size="sm">
             <Link
-              to={`/accounts/${account.id}` as any}
+              to="/accounts/$id"
+              params={{ id: account.id }}
               className="flex items-center text-sm"
             >
               <ArrowRight className="mr-2 h-3 w-3" />

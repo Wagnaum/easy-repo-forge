@@ -2,14 +2,14 @@ import { useAuth } from "@/hooks/auth";
 import { Outlet, useLocation, Link } from "@tanstack/react-router";
 import { Menu, X, LogOut, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { FormatRole } from "@/utils/format-role";
 import { useCustomer } from "@/hooks/customer";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useNavigate } from "@/lib/use-navigate";
+
 
 const navItems = [
   { label: "Dashboard", path: "/" },
@@ -19,17 +19,10 @@ const navItems = [
 
 export function AppLayout() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const { customer } = useCustomer();
   const path = location.pathname;
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth/login", { replace: true });
-    }
-  }, [navigate, user]);
 
   if (!user) {
     return (

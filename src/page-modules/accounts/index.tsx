@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/table";
 
 import { useSearchParams } from "@/lib/use-search-params";
-import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { Pagination } from "@/components/pagination";
 import { getAccounts, GetAccountsResponse } from "@/api/get-accounts";
@@ -23,7 +22,8 @@ export interface UpdateUserProps {
 
 export function AccountsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const pageIndex = z.coerce.number().parse(searchParams.get("page") ?? 0);
+  const pageParam = searchParams.get("page");
+  const pageIndex = Number.isFinite(Number(pageParam)) ? Number(pageParam) : 0;
   const status = searchParams.get("status");
   const filter = searchParams.get("filter");
 

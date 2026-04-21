@@ -24,7 +24,6 @@ import { numberToCurrent } from "@/utils/format";
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { useSearchParams } from "@/lib/use-search-params";
-import { z } from "zod";
 import { TransactionsSkeleton } from "./transactions-skeleton";
 
 interface TransactionsAccountProps {
@@ -33,7 +32,8 @@ interface TransactionsAccountProps {
 
 export function TransactionsAccount({ accountId }: TransactionsAccountProps) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const pageIndex = z.coerce.number().parse(searchParams.get("page") ?? 0);
+  const pageParam = searchParams.get("page");
+  const pageIndex = Number.isFinite(Number(pageParam)) ? Number(pageParam) : 0;
 
   const { data: result, isLoading } = useQuery<GetTransactionsResponse>({
     queryKey: ["accounts:transactions", accountId, pageIndex],

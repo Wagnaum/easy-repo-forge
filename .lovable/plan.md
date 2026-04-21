@@ -1,56 +1,55 @@
 
 
-## Plano: corrigir página de Detalhes da Conta
+## Plano: corrigir definitivamente a página de Detalhes da Conta
 
-A página `/accounts/:id` abre, mas o overlay de erro aparece e a usabilidade quebra por causa de uso indevido do `AlertDialog` raiz envolvendo toda a tela.
+A correção anterior consertou só o `AlertDialog` raiz do `index.tsx`. O mesmo bug ainda existe em `GetAccountKeysSidebar` (sidebar de chaves Pix), o que mantém a página quebrada / com overlay de erro.
 
-### Bugs identificados
+### Bug raiz (ainda presente)
 
-1. **`AlertDialog` raiz envolvendo a página inteira** (`src/page-modules/account-details/index.tsx`)
-   - Hoje todo o JSX da página vive dentro de `<AlertDialog open={changePlayerModal} ...>`. Radix `AlertDialog` é desenhado para receber um trigger + content. Envolver a página toda atrapalha foco, eventos de clique e disparou o `vite-error-overlay` visto no session replay.
-   - **Fix**: extrair o modal "Trocar Jogador" para um componente isolado (ou renderizar o `<AlertDialog>` somente em volta do seu próprio `Content`/`Footer`, fora do layout principal). Estrutura correta:
-     ```
-     <>
-       <button onClick={handleBack}>...Voltar</button>
-       <div className="grid ...">...sidebar + main...</div>
+**`src/page-modules/account-details/sidebar/get-keys.tsx`** — todo o JSX do componente vive dentro de `<AlertDialog open={open} ...>` (linhas 110–226). O `<dl>`, o seletor de "Nova chave Pix" e até o botão "Criar" estão envolvidos pelo Radix `AlertDialog`. Isso:
+- Faz o Radix tentar gerenciar foco/portal de toda a sidebar.
+- Dispara o `vite-error-overlay` ao montar/clicar.
+- Reproduz exatamente o sintoma "página não funciona" que o usuário reporta.
 
-       <AlertDialog open={changePlayerModal} onOpenChange={setChangePlayerModal}>
-         <AlertDialogContent>...</AlertDialogContent>
-       </AlertDialog>
-     </>
-     ```
+### Correção
 
-2. **Tratamento de erro da query ausente**
-   - Se `getAccount({ id })` falhar (404, 401, 500), `data` fica `undefined` e a sidebar mostra só skeletons infinitamente, sem feedback.
-   - **Fix**: ler `error` do `useQuery`, exibir mensagem amigável com botão "Tentar novamente" (`refetch()`) e botão "Voltar para contas".
+1. **`get-keys.tsx`** — reestruturar o JSX assim:
+   ```
+   <>
+     <dl className="grid gap-3"> ...lista de chaves... </dl>
 
-3. **Warning React de key duplicada em `MyAccountsSidebar`** (`src/page-modules/account-details/sidebar/my-accounts.tsx`, linhas 91–116)
-   - `<Fragment key={account.id}>` envolve `<li key={account.id}>` — a chave do `<li>` é redundante e causa o warning do console "Each child in a list should have a unique key prop".
-   - **Fix**: remover `key` do `<li>`, mantendo só no `<Fragment>`.
+     {userLogged?.id === account?.user?.id && (
+       <> ...seletor + botão Criar... </>
+     )}
 
-4. **Tipagem do Link em `MyAccountsSidebar`**
-   - `<Link to={`/accounts/${account.id}` as any}>` — ao invés do cast `as any`, usar a forma type-safe do TanStack Router:
-     ```
-     <Link to="/accounts/$id" params={{ id: account.id }}>
-     ```
+     <AlertDialog open={open} onOpenChange={setOpen}>
+       <AlertDialogContent> ...confirmação de delete... </AlertDialogContent>
+     </AlertDialog>
+   </>
+   ```
+   O `<AlertDialog>` deixa de ser wrapper e vira sibling, igual ao que foi feito em `index.tsx`.
 
-### Arquivos a editar
+2. **HTML semântica** — trocar os `<div key={key.id}>` filhos de `<dl>` por estrutura válida (manter o key no fragment ou usar `<div>` fora do `<dl>`). Remover o segundo `<dd>` órfão (botão de delete) ou agrupar com o primeiro.
 
-- `src/page-modules/account-details/index.tsx` — reestruturar JSX (mover `AlertDialog` para o final como sibling, não wrapper); adicionar bloco de erro com retry.
-- `src/page-modules/account-details/sidebar/my-accounts.tsx` — remover `key` duplicada do `<li>`; trocar `to={...as any}` pela forma com `params`.
-
-### O que NÃO muda
-
-- Nenhuma rota, nenhuma API, nenhum hook.
-- Visual: sidebar de 3 cards, tabs Transações/Transferir/Pagar QrCode, copy buttons, animação framer-motion — tudo preservado.
-- Lógica de `canChangePlayer`, `handleChangePlayer`, `balance`, `refetch` — preservada.
+3. **Warning de "unique key prop"** — o erro do console aponta `Controller` (react-hook-form) renderizando filhos sem key. Vou auditar `account-table-filters.tsx` e `user-table-filters.tsx` (são os únicos com Controller no fluxo atual) e adicionar keys onde estiver faltando, ou remover wrappers `<>...</>` problemáticos dentro do `render` do Controller.
 
 ### Como validar
 
-1. Em `/accounts`, clicar em "Visualizar" em uma conta APPROVED → página abre limpa, sem overlay de erro.
-2. Console sem warning de "unique key prop".
-3. Sidebar carrega saldo, CPF, conta, chaves Pix e lista "Minhas últimas contas".
-4. Clicar em "Acessar" em outra conta da sidebar → navega corretamente.
-5. Como super admin: clicar em "Trocar Jogador" → modal abre, CPF formatado, cancela/confirma funcionam.
-6. Forçar erro (mudar `id` na URL para algo inválido) → mensagem de erro com botão "Tentar novamente".
+1. Abrir `/accounts/:id` de uma conta APPROVED → página renderiza limpa, sem overlay vermelho do Vite.
+2. Sidebar "Minhas chaves Pix" carrega: lista de chaves + (se for o dono) seletor "Nova chave Pix" + botão Criar.
+3. Clicar no ícone 🗑️ de uma chave → modal de confirmação abre normalmente; cancelar fecha; deletar funciona.
+4. Console limpo (sem warning de "unique key prop").
+5. Trocar Jogador (super admin), Tabs Transações/Transferir/Pagar QrCode, Acessar outra conta — tudo continua funcional.
+
+### Arquivos a editar
+
+- `src/page-modules/account-details/sidebar/get-keys.tsx` (reestruturação principal)
+- `src/page-modules/accounts/account-table-filters.tsx` (auditar Controller keys)
+- `src/page-modules/users/user-table-filters.tsx` (auditar Controller keys)
+
+### O que NÃO muda
+
+- Nenhuma rota, API, hook ou regra de negócio.
+- Visual da sidebar, dos cards, das tabs — preservado.
+- Lógica de criar/deletar chave Pix, copy-to-clipboard, paginação de transações — preservada.
 

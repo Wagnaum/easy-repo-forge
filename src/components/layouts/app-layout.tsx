@@ -20,9 +20,19 @@ const navItems = [
 export function AppLayout() {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { customer } = useCustomer();
   const path = location.pathname;
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user && typeof window !== "undefined") {
+      const token = window.localStorage.getItem("@herobank:token");
+      if (!token || token === "undefined" || token === "null") {
+        navigate({ to: "/auth/login" });
+      }
+    }
+  }, [user, navigate]);
 
   if (!user) {
     return (

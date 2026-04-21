@@ -2,17 +2,17 @@
   "customers": [
     {
       "id": "8a1713f0-9aa6-4fc0-ad70-6f2ca6d5ee93",
-      "ref": "distritopay",
+      "ref": "trend-finance",
       "host": "localhost",
-      "name": "Distrito Pay",
+      "name": "Trend Finance",
       "logo": {
-        "white": "/logos/clients/distritopay/logo-white.svg",
-        "dark": "/logos/clients/distritopay/logo-dark.svg",
+        "white": "/logo-trend-dark.png",
+        "dark": "/logo-trend-light.png",
         "login": ""
       },
       "colors": {
-        "loginBackground": "#f3f3f3",
-        "buttonBackground": "#000000"
+        "loginBackground": "#ffffff",
+        "buttonBackground": "#0a0a0a"
       }
     },
     {

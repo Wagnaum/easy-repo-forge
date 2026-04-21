@@ -34,16 +34,17 @@ export function LoginLayout() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <div className="mb-8 flex flex-col items-center gap-2">
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-bold text-white"
-              style={{ backgroundColor: "var(--brand-primary)" }}
-            >
-              {customer?.name?.charAt(0) ?? "P"}
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {customer?.name ?? "Plataforma"}
-            </h1>
+          <div className="mb-8 flex flex-col items-center gap-3">
+            <img
+              src="/logo-trend-light.png"
+              alt="Trend Finance"
+              className="h-16 w-auto dark:hidden"
+            />
+            <img
+              src="/logo-trend-dark.png"
+              alt="Trend Finance"
+              className="hidden h-16 w-auto dark:block"
+            />
             <p className="text-sm text-muted-foreground">Painel Administrativo</p>
           </div>
 

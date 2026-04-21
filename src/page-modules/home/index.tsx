@@ -180,85 +180,39 @@ export function HomePage() {
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
-        {isLoadingWithdraw ? (
-          <>
-            <Skeleton className="h-28 w-full rounded-xl" />
-            <Skeleton className="h-28 w-full rounded-xl" />
-            <Skeleton className="h-28 w-full rounded-xl" />
-          </>
-        ) : (
-          <>
-            <KPICard
-              title="Contas"
-              value={numberToCurrent(withdraw?.withdraw?.totalGeneralAmount ?? 0)}
-              subtitle="Total no período"
-              index={0}
-              icon={
-                <DollarSign
-                  className="h-5 w-5"
-                  style={{ color: "var(--brand-primary)" }}
-                />
-              }
-            />
-            <KPICard
-              title="Contas Pagas"
-              value={numberToCurrent(withdraw?.withdraw?.totalNormalAmount ?? 0)}
-              subtitle="Saques cobrados"
-              index={1}
-              icon={
-                <Users
-                  className="h-5 w-5"
-                  style={{ color: "var(--brand-primary)" }}
-                />
-              }
-            />
-            <KPICard
-              title="Contas Não Pagas"
-              value={numberToCurrent(withdraw?.withdraw?.totalFreeAmount ?? 0)}
-              subtitle="Saques taxa zero"
-              index={2}
-              icon={
-                <CreditCard
-                  className="h-5 w-5"
-                  style={{ color: "var(--brand-primary)" }}
-                />
-              }
-            />
-          </>
-        )}
-      </div>
-
-      {(user.role === "SUPER_ADMIN" || user.role === "ADMIN") && !isLoadingWithdraw && withdraw?.withdraw && (
-        <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
-          <KPICard
-            title="Saldo total"
-            value={numberToCurrent(withdraw.withdraw.totalGeneralAmount ?? 0)}
-            subtitle="Movimentação geral"
-            index={0}
-            icon={<Wallet className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
-          />
-          <KPICard
-            title="Entradas"
-            value={numberToCurrent(withdraw.withdraw.totalNormalAmount ?? 0)}
-            subtitle="Saques cobrados"
-            index={1}
-            icon={<ArrowDownCircle className="h-5 w-5" style={{ color: "var(--brand-accent-dark)" }} />}
-          />
-          <KPICard
-            title="Saídas"
-            value={numberToCurrent(withdraw.withdraw.totalFreeAmount ?? 0)}
-            subtitle="Saques taxa zero"
-            index={2}
-            icon={<ArrowUpCircle className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
-          />
-          <KPICard
-            title="Total de contas"
-            value={(accounts?.accounts?.numberOfAccounts ?? 0).toLocaleString("pt-BR")}
-            subtitle="No período do gráfico"
-            index={3}
-            icon={<Users className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
-          />
+      {(user.role === "SUPER_ADMIN" || user.role === "ADMIN") && (
+        <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+          {isLoadingWithdraw ? (
+            <>
+              <Skeleton className="h-28 w-full rounded-xl" />
+              <Skeleton className="h-28 w-full rounded-xl" />
+              <Skeleton className="h-28 w-full rounded-xl" />
+            </>
+          ) : (
+            <>
+              <KPICard
+                title="Saldo total"
+                value={numberToCurrent(withdraw?.withdraw?.totalGeneralAmount ?? 0)}
+                subtitle="Total de saldo das contas no período"
+                index={0}
+                icon={<Wallet className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
+              />
+              <KPICard
+                title="Entradas"
+                value={numberToCurrent(withdraw?.withdraw?.totalNormalAmount ?? 0)}
+                subtitle="Valores depositados no período"
+                index={1}
+                icon={<ArrowDownCircle className="h-5 w-5" style={{ color: "var(--brand-accent-dark)" }} />}
+              />
+              <KPICard
+                title="Saídas"
+                value={numberToCurrent(withdraw?.withdraw?.totalFreeAmount ?? 0)}
+                subtitle="Valores sacados no período"
+                index={2}
+                icon={<ArrowUpCircle className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
+              />
+            </>
+          )}
         </div>
       )}
 

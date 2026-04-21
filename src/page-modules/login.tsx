@@ -7,23 +7,34 @@ import { useCustomer } from "@/hooks/customer";
 import { api, parseError } from "@/lib/api";
 import { toastStyle } from "@/utils/toast-style";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/use-navigate";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 export function LoginPage() {
   const { login } = useAuth();
   const navigation = useNavigate();
   const { customer } = useCustomer();
   const [loading, setLoading] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [enable2fa, setEnable2fa] = useState(false);
   const [token, setToken] = useState("");
+
+  // overlay de tela cheia quando o loading passa de 400ms
+  useEffect(() => {
+    if (!loading) {
+      setShowOverlay(false);
+      return;
+    }
+    const t = setTimeout(() => setShowOverlay(true), 400);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   const handlePreLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -62,6 +73,7 @@ export function LoginPage() {
 
     login(email, password, token)
       .then(() => {
+        // mantém o loading ativo durante a navegação
         navigation("/", { replace: true });
       })
       .catch((e) => {
@@ -79,17 +91,40 @@ export function LoginPage() {
 
         const message = parseError(e);
         toast.error(message.message, toastStyle.error);
-      })
-      .finally(() => setLoading(false));
+        setLoading(false);
+      });
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full max-w-md"
-    >
+    <>
+      <AnimatePresence>
+        {showOverlay && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm"
+            role="status"
+            aria-live="polite"
+          >
+            <Loader2
+              className="h-10 w-10 animate-spin"
+              style={{ color: "var(--brand-primary)" }}
+            />
+            <p className="text-sm text-muted-foreground">
+              {enable2fa ? "Validando código..." : "Autenticando..."}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-md"
+      >
       <Card>
         <CardContent className="pt-6">
           <form onSubmit={handlePreLogin} className="space-y-4">
@@ -194,6 +229,7 @@ export function LoginPage() {
       <p className="mt-6 text-center text-xs text-muted-foreground">
         {customer?.name ?? "Plataforma"} — Painel Administrativo
       </p>
-    </motion.div>
+      </motion.div>
+    </>
   );
 }

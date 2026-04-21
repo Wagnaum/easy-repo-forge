@@ -90,7 +90,7 @@ export function MyAccountsSidebar({
         )}
         {data?.allAccounts?.map((account) => (
           <Fragment key={account.id}>
-            <li className="flex items-center justify-between" key={account.id}>
+            <li className="flex items-center justify-between">
               <span className="text-muted-foreground">
                 {account.name} <span>{formatDocument(account.document)}</span>
                 <p className="text-xs text-muted-foreground">
@@ -105,7 +105,7 @@ export function MyAccountsSidebar({
               </span>
               <span>
                 <Button asChild variant="ghost" className="flex gap-2">
-                  <Link to={`/accounts/${account.id}` as any}>
+                  <Link to="/accounts/$id" params={{ id: account.id }}>
                     Acessar
                     <ArrowRightIcon className="w-4 h-4" />
                   </Link>

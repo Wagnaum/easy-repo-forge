@@ -1,55 +1,74 @@
 
 
-## Plano: corrigir definitivamente a página de Detalhes da Conta
+## Plano: corrigir página de Detalhes do Usuário (`/users/:id`)
 
-A correção anterior consertou só o `AlertDialog` raiz do `index.tsx`. O mesmo bug ainda existe em `GetAccountKeysSidebar` (sidebar de chaves Pix), o que mantém a página quebrada / com overlay de erro.
+### Bug raiz
 
-### Bug raiz (ainda presente)
+Mesma arquitetura quebrada que já corrigimos em `/accounts`:
 
-**`src/page-modules/account-details/sidebar/get-keys.tsx`** — todo o JSX do componente vive dentro de `<AlertDialog open={open} ...>` (linhas 110–226). O `<dl>`, o seletor de "Nova chave Pix" e até o botão "Criar" estão envolvidos pelo Radix `AlertDialog`. Isso:
-- Faz o Radix tentar gerenciar foco/portal de toda a sidebar.
-- Dispara o `vite-error-overlay` ao montar/clicar.
-- Reproduz exatamente o sintoma "página não funciona" que o usuário reporta.
+- `src/routes/_app.users.tsx` define `component: UsersPage` (a lista de cadastros).
+- `src/routes/_app.users.$id.tsx` é filho dessa rota no roteamento flat do TanStack.
+- Como `UsersPage` não renderiza `<Outlet />`, ao acessar `/users/f4752704-...` o router monta o componente pai (lista) e o filho (`UserDetailsPage`) nunca aparece — daí o usuário vê a página de listagem ou tela em branco em vez dos detalhes.
 
-### Correção
+A correção espelha o que foi feito em `_app.accounts.tsx` + `_app.accounts.index.tsx`.
 
-1. **`get-keys.tsx`** — reestruturar o JSX assim:
+### Mudanças
+
+1. **`src/routes/_app.users.tsx`** — transformar em layout puro com `<Outlet />`:
+   ```tsx
+   import { Outlet, createFileRoute } from "@tanstack/react-router";
+
+   export const Route = createFileRoute("/_app/users")({
+     component: UsersLayout,
+   });
+
+   function UsersLayout() {
+     return <Outlet />;
+   }
    ```
-   <>
-     <dl className="grid gap-3"> ...lista de chaves... </dl>
 
-     {userLogged?.id === account?.user?.id && (
-       <> ...seletor + botão Criar... </>
-     )}
+2. **Criar `src/routes/_app.users.index.tsx`** — hospeda a lista:
+   ```tsx
+   import { createFileRoute } from "@tanstack/react-router";
+   import { UsersPage } from "@/page-modules/users";
 
-     <AlertDialog open={open} onOpenChange={setOpen}>
-       <AlertDialogContent> ...confirmação de delete... </AlertDialogContent>
-     </AlertDialog>
-   </>
+   export const Route = createFileRoute("/_app/users/")({
+     head: () => ({ meta: [{ title: "Cadastros" }] }),
+     component: UsersPage,
+   });
    ```
-   O `<AlertDialog>` deixa de ser wrapper e vira sibling, igual ao que foi feito em `index.tsx`.
 
-2. **HTML semântica** — trocar os `<div key={key.id}>` filhos de `<dl>` por estrutura válida (manter o key no fragment ou usar `<div>` fora do `<dl>`). Remover o segundo `<dd>` órfão (botão de delete) ou agrupar com o primeiro.
+3. **`src/page-modules/users/user-table-row.tsx`** — trocar o `<Link to={`/users/${user.id}` as any}>` (cast `as any`) pela forma type-safe:
+   ```tsx
+   <Link to="/users/$id" params={{ id: user.id }}>
+   ```
+   Remove o cast `as any` e garante que o link use a rota tipada correta.
 
-3. **Warning de "unique key prop"** — o erro do console aponta `Controller` (react-hook-form) renderizando filhos sem key. Vou auditar `account-table-filters.tsx` e `user-table-filters.tsx` (são os únicos com Controller no fluxo atual) e adicionar keys onde estiver faltando, ou remover wrappers `<>...</>` problemáticos dentro do `render` do Controller.
+4. **Sanidade no `pageIndex` da listagem (se aplicável)** — auditar `src/page-modules/users/index.tsx` e aplicar o mesmo guard usado em `accounts/index.tsx`:
+   ```ts
+   const pageIndex = Number.isFinite(Number(pageParam)) ? Number(pageParam) : 0;
+   ```
+   para evitar `NaN` no paginador.
 
 ### Como validar
 
-1. Abrir `/accounts/:id` de uma conta APPROVED → página renderiza limpa, sem overlay vermelho do Vite.
-2. Sidebar "Minhas chaves Pix" carrega: lista de chaves + (se for o dono) seletor "Nova chave Pix" + botão Criar.
-3. Clicar no ícone 🗑️ de uma chave → modal de confirmação abre normalmente; cancelar fecha; deletar funciona.
-4. Console limpo (sem warning de "unique key prop").
-5. Trocar Jogador (super admin), Tabs Transações/Transferir/Pagar QrCode, Acessar outra conta — tudo continua funcional.
+1. Abrir `/users` → lista de cadastros carrega normal.
+2. Clicar em "Detalhes" de um usuário → vai para `/users/<id>` e renderiza `UserDetailsPage` com as 3 tabs (Dados Básicos, Documentos, KYC).
+3. Tab Dados Básicos → mostra usuário, individual, endereço.
+4. Tab Documentos → lista documentos e abre o Sheet de visualização.
+5. Tab KYC → mostra sub-tabs Dados Básicos / Processos.
+6. Botão voltar (`ChevronLeft`) retorna para `/users`.
+7. Console limpo (sem `Maximum update depth`, sem warnings novos).
 
-### Arquivos a editar
+### Arquivos
 
-- `src/page-modules/account-details/sidebar/get-keys.tsx` (reestruturação principal)
-- `src/page-modules/accounts/account-table-filters.tsx` (auditar Controller keys)
-- `src/page-modules/users/user-table-filters.tsx` (auditar Controller keys)
+- editar: `src/routes/_app.users.tsx`
+- criar: `src/routes/_app.users.index.tsx`
+- editar: `src/page-modules/users/user-table-row.tsx`
+- editar (se necessário): `src/page-modules/users/index.tsx`
 
 ### O que NÃO muda
 
-- Nenhuma rota, API, hook ou regra de negócio.
-- Visual da sidebar, dos cards, das tabs — preservado.
-- Lógica de criar/deletar chave Pix, copy-to-clipboard, paginação de transações — preservada.
+- API `getKyc`, hooks de auth, conteúdo das tabs, UI dos cards e tabelas — tudo preservado.
+- Nenhuma regra de negócio ou permissão é alterada.
 

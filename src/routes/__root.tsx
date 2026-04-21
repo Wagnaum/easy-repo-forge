@@ -10,6 +10,7 @@ import { Toaster as ToasterSonner } from "sonner";
 import { Toaster as ToasterHot } from "react-hot-toast";
 import { CustomerProvider } from "@/context/customer";
 import { AuthContextProvider } from "@/context/auth";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import appCss from "../styles.css?url";
 
@@ -82,13 +83,15 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <CustomerProvider>
-        <AuthContextProvider>
-          <Outlet />
-          <ToasterSonner position="top-right" richColors closeButton />
-          <ToasterHot position="top-right" />
-        </AuthContextProvider>
-      </CustomerProvider>
+      <ThemeProvider>
+        <CustomerProvider>
+          <AuthContextProvider>
+            <Outlet />
+            <ToasterSonner position="top-right" richColors closeButton />
+            <ToasterHot position="top-right" />
+          </AuthContextProvider>
+        </CustomerProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

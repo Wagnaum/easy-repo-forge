@@ -61,7 +61,9 @@ export function LoginPage() {
     setLoading(true);
 
     login(email, password, token)
-      .then(() => {})
+      .then(() => {
+        navigation("/", { replace: true });
+      })
       .catch((e) => {
         if (e.code === "user-not-verified") {
           toast.error(e.message, toastStyle.error);
@@ -73,10 +75,10 @@ export function LoginPage() {
             800
           );
           return;
-        } else {
-          const message = parseError(e);
-          toast.error(message.message, toastStyle.error);
         }
+
+        const message = parseError(e);
+        toast.error(message.message, toastStyle.error);
       })
       .finally(() => setLoading(false));
   };

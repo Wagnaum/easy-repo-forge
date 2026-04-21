@@ -7,11 +7,11 @@ import { useCustomer } from "@/hooks/customer";
 import { api, parseError } from "@/lib/api";
 import { toastStyle } from "@/utils/toast-style";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/use-navigate";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 export function LoginPage() {
   const { login } = useAuth();

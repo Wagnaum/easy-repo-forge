@@ -11,6 +11,7 @@ import { Toaster as ToasterHot } from "react-hot-toast";
 import { CustomerProvider } from "@/context/customer";
 import { AuthContextProvider } from "@/context/auth";
 import { ThemeProvider } from "@/components/theme-provider";
+import { RouteTransitionLoader } from "@/components/shared/route-transition-loader";
 
 import appCss from "../styles.css?url";
 
@@ -87,6 +88,7 @@ function RootComponent() {
         <CustomerProvider>
           <AuthContextProvider>
             <Outlet />
+            <RouteTransitionLoader />
             <ToasterSonner position="top-right" richColors closeButton />
             <ToasterHot position="top-right" />
           </AuthContextProvider>

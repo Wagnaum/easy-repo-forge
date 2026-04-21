@@ -1,14 +1,15 @@
 import { useAuth } from "@/hooks/auth";
-import { Navigate, Outlet, useLocation, Link } from "@tanstack/react-router";
-import { Menu, X, LogOut } from "lucide-react";
+import { Outlet, useLocation, Link } from "@tanstack/react-router";
+import { Menu, X, LogOut, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { FormatRole } from "@/utils/format-role";
 import { useCustomer } from "@/hooks/customer";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useNavigate } from "@/lib/use-navigate";
 
 const navItems = [
   { label: "Dashboard", path: "/" },
@@ -18,13 +19,24 @@ const navItems = [
 
 export function AppLayout() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
   const { customer } = useCustomer();
   const path = location.pathname;
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth/login", { replace: true });
+    }
+  }, [navigate, user]);
+
   if (!user) {
-    return <Navigate to={"/auth/login" as any} />;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   const initials = (user.name ?? "U")
@@ -41,7 +53,6 @@ export function AppLayout() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 lg:px-8">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div
               className="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white"
@@ -54,7 +65,6 @@ export function AppLayout() {
             </span>
           </Link>
 
-          {/* Desktop Nav */}
           <nav className="hidden items-center gap-1 md:flex">
             {navItems.map((item) => {
               const active = isActive(item.path);
@@ -79,7 +89,6 @@ export function AppLayout() {
             })}
           </nav>
 
-          {/* Right side */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
 
@@ -111,7 +120,6 @@ export function AppLayout() {
               </Button>
             </div>
 
-            {/* Mobile menu button */}
             <Button
               variant="ghost"
               size="icon"
@@ -124,7 +132,6 @@ export function AppLayout() {
           </div>
         </div>
 
-        {/* Mobile Nav */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div

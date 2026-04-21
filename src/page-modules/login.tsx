@@ -18,12 +18,23 @@ export function LoginPage() {
   const navigation = useNavigate();
   const { customer } = useCustomer();
   const [loading, setLoading] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [enable2fa, setEnable2fa] = useState(false);
   const [token, setToken] = useState("");
+
+  // overlay de tela cheia quando o loading passa de 400ms
+  useEffect(() => {
+    if (!loading) {
+      setShowOverlay(false);
+      return;
+    }
+    const t = setTimeout(() => setShowOverlay(true), 400);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   const handlePreLogin = async (e: FormEvent) => {
     e.preventDefault();

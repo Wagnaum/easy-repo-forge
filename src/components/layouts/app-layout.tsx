@@ -75,15 +75,17 @@ export function AppLayout() {
                 <Link
                   key={item.path}
                   to={item.path as any}
-                  className="relative px-4 py-2 text-sm font-medium transition-colors duration-200"
-                  style={{ color: active ? "var(--brand-primary)" : undefined }}
+                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                    active
+                      ? "text-[var(--brand-primary)] dark:text-[var(--brand-accent)]"
+                      : "text-foreground/80 hover:text-foreground"
+                  }`}
                 >
                   {item.label}
                   {active && (
                     <motion.div
                       layoutId="navbar-indicator"
-                      className="absolute bottom-0 left-0 right-0 h-0.5"
-                      style={{ backgroundColor: "var(--brand-primary)" }}
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--brand-primary)] dark:bg-[var(--brand-accent)]"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                     />
                   )}
@@ -152,11 +154,11 @@ export function AppLayout() {
                       key={item.path}
                       to={item.path as any}
                       onClick={() => setMobileOpen(false)}
-                      className="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
-                      style={{
-                        color: active ? "var(--brand-primary)" : undefined,
-                        backgroundColor: active ? "var(--brand-primary-light)" : undefined,
-                      }}
+                      className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                        active
+                          ? "bg-[var(--brand-primary-light)] text-[var(--brand-primary)] dark:bg-[var(--brand-accent)]/15 dark:text-[var(--brand-accent)]"
+                          : "text-foreground/80 hover:bg-muted"
+                      }`}
                     >
                       {item.label}
                     </Link>

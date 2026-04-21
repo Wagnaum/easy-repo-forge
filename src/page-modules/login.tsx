@@ -96,12 +96,35 @@ export function LoginPage() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full max-w-md"
-    >
+    <>
+      <AnimatePresence>
+        {showOverlay && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-background/80 backdrop-blur-sm"
+            role="status"
+            aria-live="polite"
+          >
+            <Loader2
+              className="h-10 w-10 animate-spin"
+              style={{ color: "var(--brand-primary)" }}
+            />
+            <p className="text-sm text-muted-foreground">
+              {enable2fa ? "Validando código..." : "Autenticando..."}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-md"
+      >
       <Card>
         <CardContent className="pt-6">
           <form onSubmit={handlePreLogin} className="space-y-4">

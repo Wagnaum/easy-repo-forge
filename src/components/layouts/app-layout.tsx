@@ -180,14 +180,9 @@ export function AppLayout() {
         </AnimatePresence>
       </header>
 
-      <motion.main
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.28, ease: "easeOut" }}
-        className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 lg:px-8"
-      >
+      <main className="mx-auto max-w-[1400px] space-y-6 px-4 py-6 lg:px-8">
         <Outlet />
-      </motion.main>
+      </main>
     </div>
   );
 }

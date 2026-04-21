@@ -36,6 +36,13 @@ export function useSearchParams(): [URLSearchParams, (next: SetParamsArg) => voi
         if (v !== "" && v != null) obj[k] = v;
       });
 
+      const nextSearch = new URLSearchParams(obj).toString();
+      const currentSearch = search.toString();
+
+      if (nextSearch === currentSearch) {
+        return;
+      }
+
       navigate({
         to: location.pathname,
         search: obj,

@@ -19,7 +19,7 @@ import { FormatZeroRateStatus } from "@/utils/format-role";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "@/lib/use-search-params";
 import { z } from "zod";
 import IntlCurrencyInput from "@/components/react-intl-currency-input/intl-currency-input";
@@ -95,15 +95,6 @@ export function ZeroRatePage() {
       return prev;
     });
   }
-
-  useEffect(() => {
-    setSearchParams((prev) => {
-      prev.set("type", "FREE");
-      prev.set("status", "WAITING_ANALYSIS");
-      return prev;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   function handleOpen(withdraw: GetZeroRateResponse) {
     setSheetData(withdraw);

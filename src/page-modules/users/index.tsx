@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 
 import { useSearchParams } from "@/lib/use-search-params";
-import { z } from "zod";
+
 import { useAuth } from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { getUsers, GetUsersResponse } from "@/api/get-users";
@@ -30,7 +30,8 @@ export function UsersPage() {
   const queryClient = useQueryClient();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const pageIndex = z.coerce.number().parse(searchParams.get("page") ?? 0);
+  const pageParam = searchParams.get("page");
+  const pageIndex = Number.isFinite(Number(pageParam)) ? Number(pageParam) : 0;
   const filter = searchParams.get("filter");
   const status = searchParams.get("status");
   const role = searchParams.get("role");

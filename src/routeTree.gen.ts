@@ -22,6 +22,7 @@ import { Route as AppUsersRouteImport } from './routes/_app.users'
 import { Route as AppSignoutRouteImport } from './routes/_app.signout'
 import { Route as AppGatewaysRouteImport } from './routes/_app.gateways'
 import { Route as AppAccountsRouteImport } from './routes/_app.accounts'
+import { Route as AppUsersIndexRouteImport } from './routes/_app.users.index'
 import { Route as AppAccountsIndexRouteImport } from './routes/_app.accounts.index'
 import { Route as AuthAccountRegisterRouteImport } from './routes/auth.account.register'
 import { Route as AuthAccountOpenRegisterRouteImport } from './routes/auth.account.open-register'
@@ -92,6 +93,11 @@ const AppAccountsRoute = AppAccountsRouteImport.update({
   path: '/accounts',
   getParentRoute: () => AppRoute,
 } as any)
+const AppUsersIndexRoute = AppUsersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppUsersRoute,
+} as any)
 const AppAccountsIndexRoute = AppAccountsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -136,11 +142,11 @@ export interface FileRoutesByFullPath {
   '/auth/account/open-register': typeof AuthAccountOpenRegisterRoute
   '/auth/account/register': typeof AuthAccountRegisterRoute
   '/accounts/': typeof AppAccountsIndexRoute
+  '/users/': typeof AppUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/gateways': typeof AppGatewaysRoute
   '/signout': typeof AppSignoutRoute
-  '/users': typeof AppUsersRouteWithChildren
   '/zero-rate': typeof AppZeroRateRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -153,6 +159,7 @@ export interface FileRoutesByTo {
   '/auth/account/open-register': typeof AuthAccountOpenRegisterRoute
   '/auth/account/register': typeof AuthAccountRegisterRoute
   '/accounts': typeof AppAccountsIndexRoute
+  '/users': typeof AppUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -174,6 +181,7 @@ export interface FileRoutesById {
   '/auth/account/open-register': typeof AuthAccountOpenRegisterRoute
   '/auth/account/register': typeof AuthAccountRegisterRoute
   '/_app/accounts/': typeof AppAccountsIndexRoute
+  '/_app/users/': typeof AppUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -195,11 +203,11 @@ export interface FileRouteTypes {
     | '/auth/account/open-register'
     | '/auth/account/register'
     | '/accounts/'
+    | '/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/gateways'
     | '/signout'
-    | '/users'
     | '/zero-rate'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -212,6 +220,7 @@ export interface FileRouteTypes {
     | '/auth/account/open-register'
     | '/auth/account/register'
     | '/accounts'
+    | '/users'
   id:
     | '__root__'
     | '/_app'
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/auth/account/open-register'
     | '/auth/account/register'
     | '/_app/accounts/'
+    | '/_app/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -332,6 +342,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/users/': {
+      id: '/_app/users/'
+      path: '/'
+      fullPath: '/users/'
+      preLoaderRoute: typeof AppUsersIndexRouteImport
+      parentRoute: typeof AppUsersRoute
+    }
     '/_app/accounts/': {
       id: '/_app/accounts/'
       path: '/'
@@ -386,10 +403,12 @@ const AppAccountsRouteWithChildren = AppAccountsRoute._addFileChildren(
 
 interface AppUsersRouteChildren {
   AppUsersIdRoute: typeof AppUsersIdRoute
+  AppUsersIndexRoute: typeof AppUsersIndexRoute
 }
 
 const AppUsersRouteChildren: AppUsersRouteChildren = {
   AppUsersIdRoute: AppUsersIdRoute,
+  AppUsersIndexRoute: AppUsersIndexRoute,
 }
 
 const AppUsersRouteWithChildren = AppUsersRoute._addFileChildren(

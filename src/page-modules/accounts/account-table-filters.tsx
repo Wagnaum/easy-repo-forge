@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Format } from "@/components/input/format";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import toast from "react-hot-toast";
 import { toastStyle } from "@/utils/toast-style";
 import { api, parseError } from "@/lib/api";
@@ -177,12 +177,10 @@ export function AccountTableFilters({ refetch }: AccountTableFiltersProps) {
               <SelectContent>
                 <SelectItem value="all">Todas as contas</SelectItem>
                 {Object.entries(statusOptions).map(([key, value]) => (
-                  <>
+                  <Fragment key={key}>
                     {key === "positiveBalance" && <Separator />}
-                    <SelectItem value={key} key={key}>
-                      {value}
-                    </SelectItem>
-                  </>
+                    <SelectItem value={key}>{value}</SelectItem>
+                  </Fragment>
                 ))}
               </SelectContent>
             </Select>

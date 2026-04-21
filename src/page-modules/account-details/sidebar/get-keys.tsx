@@ -107,105 +107,100 @@ export function GetAccountKeysSidebar({
 
   return (
     <>
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <dl className="grid gap-3">
-          {isLoading && (
-            <>
-              <div className="flex items-center justify-between">
-                <dt className="text-muted-foreground flex flex-col">
-                  <Skeleton className="h-5 w-[250px] mb-1" />
-                  <Skeleton className="h-5 w-[60px]" />
-                </dt>
-                <dd>
-                  <Skeleton className="h-4 w-4" />
-                </dd>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <dt className="text-muted-foreground flex flex-col">
-                  <Skeleton className="h-5 w-[250px] mb-1" />
-                  <Skeleton className="h-5 w-full" />
-                </dt>
-                <dd>
-                  <Skeleton className="h-4 w-4" />
-                </dd>
-              </div>
-            </>
-          )}
-
-          {!isLoading && isSuccess && data?.data?.length > 0 ? (
-            data?.data.map((key) => (
-              <div key={key.id}>
-                <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground flex flex-col">
-                    <span>
-                      {key.type === "CPF" ? formatDocument(key.key) : key.key}
-                    </span>
-                    <span>{key.type}</span>
-                  </dt>
-                  <dd>
-                    <CopyToClipboard
-                      text={key.key}
-                      onCopy={() => {
-                        toast.success(
-                          "chave copiada com sucesso!",
-                          toastStyle.success
-                        );
-                      }}
-                    >
-                      <Copy className="w-4 h-4 cursor-pointer" />
-                    </CopyToClipboard>
-                  </dd>
-
-                  <dd>
-                    <Button
-                      variant="link"
-                      onClick={() => {
-                        setKeyId(key.key);
-                        setOpen(true);
-                      }}
-                    >
-                      <Trash className="w-4 h-4 cursor-pointer" />
-                    </Button>
-                  </dd>
-                </div>
-              </div>
-            ))
-          ) : (
-            <>
-              <span>Nenhuma chave cadastrada.</span>
-            </>
-          )}
-        </dl>
-
-        {userLogged?.id === account?.user?.id && (
+      <dl className="grid gap-3">
+        {isLoading && (
           <>
-            <Separator className="my-2" />
-            <div className="font-semibold">Nova chave Pix</div>
-            <div className="flex gap-4">
-              <div className="w-1/2">
-                <Select onValueChange={handleNewKeyValue}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione o Tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* <SelectItem value="CELULAR">Celular</SelectItem> */}
-                    <SelectItem value="EVP">Aleatória</SelectItem>
-                    <SelectItem value="CPF/CNPJ">CPF</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground flex flex-col">
+                <Skeleton className="h-5 w-[250px] mb-1" />
+                <Skeleton className="h-5 w-[60px]" />
+              </dt>
+              <dd>
+                <Skeleton className="h-4 w-4" />
+              </dd>
+            </div>
 
-              {keyType && (
-                <Button className="w-1/2" onClick={handleNewKey}>
-                  {loadingNewKey && <Loader2 className="animate-spin mr-2" />}
-                  Criar
-                </Button>
-              )}
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground flex flex-col">
+                <Skeleton className="h-5 w-[250px] mb-1" />
+                <Skeleton className="h-5 w-full" />
+              </dt>
+              <dd>
+                <Skeleton className="h-4 w-4" />
+              </dd>
             </div>
           </>
         )}
 
+        {!isLoading && isSuccess && data?.data?.length > 0 ? (
+          data?.data.map((key) => (
+            <div
+              key={key.id}
+              className="flex items-center justify-between"
+            >
+              <dt className="text-muted-foreground flex flex-col">
+                <span>
+                  {key.type === "CPF" ? formatDocument(key.key) : key.key}
+                </span>
+                <span>{key.type}</span>
+              </dt>
+              <dd className="flex items-center gap-2">
+                <CopyToClipboard
+                  text={key.key}
+                  onCopy={() => {
+                    toast.success(
+                      "chave copiada com sucesso!",
+                      toastStyle.success
+                    );
+                  }}
+                >
+                  <Copy className="w-4 h-4 cursor-pointer" />
+                </CopyToClipboard>
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    setKeyId(key.key);
+                    setOpen(true);
+                  }}
+                >
+                  <Trash className="w-4 h-4 cursor-pointer" />
+                </Button>
+              </dd>
+            </div>
+          ))
+        ) : (
+          !isLoading && <span>Nenhuma chave cadastrada.</span>
+        )}
+      </dl>
+
+      {userLogged?.id === account?.user?.id && (
+        <>
+          <Separator className="my-2" />
+          <div className="font-semibold">Nova chave Pix</div>
+          <div className="flex gap-4">
+            <div className="w-1/2">
+              <Select onValueChange={handleNewKeyValue}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecione o Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="EVP">Aleatória</SelectItem>
+                  <SelectItem value="CPF/CNPJ">CPF</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {keyType && (
+              <Button className="w-1/2" onClick={handleNewKey}>
+                {loadingNewKey && <Loader2 className="animate-spin mr-2" />}
+                Criar
+              </Button>
+            )}
+          </div>
+        </>
+      )}
+
+      <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>

@@ -57,15 +57,16 @@ export function AppLayout() {
       <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white"
-              style={{ backgroundColor: "var(--brand-primary)" }}
-            >
-              {customer?.name?.charAt(0) ?? "P"}
-            </div>
-            <span className="text-lg font-bold text-foreground">
-              {customer?.name ?? "Plataforma"}
-            </span>
+            <img
+              src="/logo-trend-light.png"
+              alt={customer?.name ?? "Trend Finance"}
+              className="h-8 w-auto dark:hidden"
+            />
+            <img
+              src="/logo-trend-dark.png"
+              alt={customer?.name ?? "Trend Finance"}
+              className="hidden h-8 w-auto dark:block"
+            />
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex">

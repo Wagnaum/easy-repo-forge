@@ -6,6 +6,7 @@ import { ArrowDownCircle, ArrowUpCircle, CalendarIcon, Wallet } from "lucide-rea
 import { ChartAccount } from "./chart-account";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TotalAccounts } from "./total-account";
+import { TransactionsCard } from "./transactions-card";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
 import {
@@ -288,6 +289,25 @@ export function HomePage() {
             endAt={dateGraph?.to}
           />
         )}
+      </div>
+
+      <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+        <TransactionsCard
+          title="Últimas transações"
+          subtitle="As 5 mais recentes no período"
+          orderBy="createdAt"
+          startAt={date?.from}
+          endAt={date?.to}
+          index={0}
+        />
+        <TransactionsCard
+          title="Maiores transações"
+          subtitle="Os 5 maiores valores no período"
+          orderBy="amount"
+          startAt={date?.from}
+          endAt={date?.to}
+          index={1}
+        />
       </div>
 
       {/* <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-6">

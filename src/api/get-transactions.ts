@@ -48,3 +48,25 @@ export async function getTransactions({ accountId, pageIndex }: GetTransactionsQ
 
   return response.data
 }
+
+export interface GetGlobalTransactionsQuery {
+  limit?: number
+  orderBy?: "createdAt" | "amount"
+  order?: "asc" | "desc"
+  startAt?: string | Date
+  endAt?: string | Date
+}
+
+export async function getGlobalTransactions({
+  limit = 5,
+  orderBy = "createdAt",
+  order = "desc",
+  startAt,
+  endAt,
+}: GetGlobalTransactionsQuery = {}) {
+  const response = await api.get<{ data: GetTransactionResponse[] }>(`/transactions`, {
+    params: { limit, orderBy, order, startAt, endAt },
+  })
+
+  return response.data
+}

@@ -12,6 +12,8 @@ import toast from "react-hot-toast";
 import { Link } from "@tanstack/react-router";
 import { useNavigate } from "@/lib/use-navigate";
 import { AnimatePresence, motion } from "framer-motion";
+import Lottie from "lottie-react";
+import stricLogoAnimation from "@/assets/stric-logo.json";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -108,9 +110,10 @@ export function LoginPage() {
             role="status"
             aria-live="polite"
           >
-            <Loader2
-              className="h-10 w-10 animate-spin"
-              style={{ color: "var(--brand-primary)" }}
+            <Lottie
+              animationData={stricLogoAnimation}
+              loop
+              className="h-32 w-32"
             />
             <p className="text-sm text-muted-foreground">
               {enable2fa ? "Validando código..." : "Autenticando..."}

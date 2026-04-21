@@ -101,8 +101,25 @@ export function AccountDetailsPage() {
       ? (data?.account?.balance ?? 0) / 2
       : data?.account?.balance ?? 0;
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+        <h2 className="text-lg font-semibold">Não foi possível carregar a conta</h2>
+        <p className="text-sm text-muted-foreground max-w-md">
+          {(error as Error)?.message || "Ocorreu um erro inesperado ao buscar os dados desta conta."}
+        </p>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleBack}>
+            <ArrowLeft className="h-4 w-4 mr-1" /> Voltar para contas
+          </Button>
+          <Button onClick={() => refetch()}>Tentar novamente</Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <AlertDialog open={changePlayerModal} onOpenChange={setChangePlayerModal}>
+    <>
       <button
         onClick={handleBack}
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -272,33 +289,35 @@ export function AccountDetailsPage() {
         </div>
       </div>
 
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Trocar conta de jogador</AlertDialogTitle>
-          <AlertDialogDescription>
-            Para realizar essa ação, informe o CPF do novo jogador (Para onde a
-            conta será transferida).
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <div className="mt-2 mb-2">
-          <Label htmlFor="last-name">CPF</Label>
-          <Input
-            id="last-name"
-            value={Format.CPF(document)}
-            onChange={(e) => setDocument(e.target.value)}
-          />
-        </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <Button
-            onClick={handleChangePlayer}
-            disabled={loadingChangePlayer}
-          >
-            {loadingChangePlayer && <Loader2 className="animate-spin mr-2" />}
-            Trocar
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+      <AlertDialog open={changePlayerModal} onOpenChange={setChangePlayerModal}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Trocar conta de jogador</AlertDialogTitle>
+            <AlertDialogDescription>
+              Para realizar essa ação, informe o CPF do novo jogador (Para onde a
+              conta será transferida).
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="mt-2 mb-2">
+            <Label htmlFor="last-name">CPF</Label>
+            <Input
+              id="last-name"
+              value={Format.CPF(document)}
+              onChange={(e) => setDocument(e.target.value)}
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <Button
+              onClick={handleChangePlayer}
+              disabled={loadingChangePlayer}
+            >
+              {loadingChangePlayer && <Loader2 className="animate-spin mr-2" />}
+              Trocar
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

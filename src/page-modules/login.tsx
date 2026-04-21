@@ -62,6 +62,7 @@ export function LoginPage() {
 
     login(email, password, token)
       .then(() => {
+        // mantém o loading ativo durante a navegação
         navigation("/", { replace: true });
       })
       .catch((e) => {
@@ -79,8 +80,8 @@ export function LoginPage() {
 
         const message = parseError(e);
         toast.error(message.message, toastStyle.error);
-      })
-      .finally(() => setLoading(false));
+        setLoading(false);
+      });
   };
 
   return (

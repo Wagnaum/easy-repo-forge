@@ -44,10 +44,11 @@ export function AccountDetailsPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["accounts-details", id],
     queryFn: () => getAccount({ id }),
     refetchInterval: 1000 * 60,
+    retry: 1,
   });
 
   function handleBack() {

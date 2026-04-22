@@ -55,17 +55,18 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { property: "og:description", content: "Trend Finance — Plataforma de gestão financeira e painel administrativo." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Trend Finance" },
-      { property: "og:image", content: "/apple-touch-icon.png" },
+      { property: "og:url", content: "https://trendbet.lovable.app/" },
+      { property: "og:image", content: "https://trendbet.lovable.app/apple-touch-icon.png" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Trend Finance — Painel Administrativo" },
       { name: "twitter:description", content: "Trend Finance — Plataforma de gestão financeira e painel administrativo." },
-      { name: "twitter:image", content: "/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://trendbet.lovable.app/apple-touch-icon.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-      { rel: "canonical", href: "/" },
+      { rel: "canonical", href: "https://trendbet.lovable.app/" },
     ],
     scripts: [
       {

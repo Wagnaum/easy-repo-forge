@@ -66,7 +66,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-      { rel: "canonical", href: "/" },
+      { rel: "canonical", href: "https://trendbet.lovable.app/" },
     ],
     scripts: [
       {

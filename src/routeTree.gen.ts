@@ -17,6 +17,7 @@ import { Route as AuthSignoutRouteImport } from './routes/auth.signout'
 import { Route as AuthRegisterRouteImport } from './routes/auth.register'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthBridgeRouteImport } from './routes/auth.bridge'
 import { Route as AppZeroRateRouteImport } from './routes/_app.zero-rate'
 import { Route as AppUsersRouteImport } from './routes/_app.users'
 import { Route as AppSignoutRouteImport } from './routes/_app.signout'
@@ -66,6 +67,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthBridgeRoute = AuthBridgeRouteImport.update({
+  id: '/bridge',
+  path: '/bridge',
   getParentRoute: () => AuthRoute,
 } as any)
 const AppZeroRateRoute = AppZeroRateRouteImport.update({
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/signout': typeof AppSignoutRoute
   '/users': typeof AppUsersRouteWithChildren
   '/zero-rate': typeof AppZeroRateRoute
+  '/auth/bridge': typeof AuthBridgeRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/gateways': typeof AppGatewaysRoute
   '/signout': typeof AppSignoutRoute
   '/zero-rate': typeof AppZeroRateRoute
+  '/auth/bridge': typeof AuthBridgeRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/_app/signout': typeof AppSignoutRoute
   '/_app/users': typeof AppUsersRouteWithChildren
   '/_app/zero-rate': typeof AppZeroRateRoute
+  '/auth/bridge': typeof AuthBridgeRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/signout'
     | '/users'
     | '/zero-rate'
+    | '/auth/bridge'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/gateways'
     | '/signout'
     | '/zero-rate'
+    | '/auth/bridge'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/_app/signout'
     | '/_app/users'
     | '/_app/zero-rate'
+    | '/auth/bridge'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
@@ -305,6 +317,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/auth/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/bridge': {
+      id: '/auth/bridge'
+      path: '/bridge'
+      fullPath: '/auth/bridge'
+      preLoaderRoute: typeof AuthBridgeRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_app/zero-rate': {
@@ -436,6 +455,7 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AuthRouteChildren {
+  AuthBridgeRoute: typeof AuthBridgeRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
@@ -446,6 +466,7 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthBridgeRoute: AuthBridgeRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,

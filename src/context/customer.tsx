@@ -31,8 +31,16 @@ export const CustomerContext = createContext({} as CustomerContextData);
 export function CustomerProvider({ children }: AuthProviderProps) {
   const [customer, setCustomer] = useState<Customer>({} as Customer);
   useEffect(() => {
+    const host = window.location.host;
+    const isPreview =
+      host.includes("lovable.app") ||
+      host.includes("lovableproject.com") ||
+      host.startsWith("localhost") ||
+      host.startsWith("127.0.0.1");
+
     const configCustomer =
-      customers.find((c) => window.location.host.includes(c.host)) ||
+      (!isPreview &&
+        customers.find((c) => c.host !== "localhost" && host.includes(c.host))) ||
       customers[0];
 
     setCustomer({

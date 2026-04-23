@@ -7,6 +7,16 @@ export function useIsOwem(): boolean {
     }
 
     const hostname = window.location.hostname;
-    return hostname.includes("distritopay.com");
+    if (hostname.includes("distritopay.com")) return true;
+    // Preview/local fallback so UI gates dependent on "owem" still render
+    if (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname.includes("lovable.app") ||
+      hostname.includes("lovableproject.com")
+    ) {
+      return true;
+    }
+    return false;
   }, []);
 }

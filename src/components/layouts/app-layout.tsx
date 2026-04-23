@@ -1,7 +1,6 @@
 import { useAuth } from "@/hooks/auth";
 import { Outlet, useLocation, Link, useNavigate } from "@tanstack/react-router";
-import { Menu, X, LogOut, Loader2, ExternalLink } from "lucide-react";
-import { toast } from "sonner";
+import { Menu, X, LogOut, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -97,29 +96,6 @@ export function AppLayout() {
           </nav>
 
           <div className="flex items-center gap-3">
-            {typeof window !== "undefined" &&
-              !window.location.host.includes("lovable.app") &&
-              !window.location.host.startsWith("localhost") && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hidden md:inline-flex"
-                  onClick={() => {
-                    const token = window.localStorage.getItem("@herobank:token");
-                    if (!token) {
-                      toast.error("Sessão não encontrada.");
-                      return;
-                    }
-                    const previewUrl = `https://id-preview--67380fdf-88f0-465b-a9e1-1737fb72c483.lovable.app/auth/bridge?token=${encodeURIComponent(
-                      token
-                    )}`;
-                    window.open(previewUrl, "_blank", "noopener,noreferrer");
-                  }}
-                >
-                  <ExternalLink className="mr-2 h-3.5 w-3.5" />
-                  Abrir no editor
-                </Button>
-              )}
             <ThemeToggle />
 
             <div className="hidden items-center gap-2 md:flex">

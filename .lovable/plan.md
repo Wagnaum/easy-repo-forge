@@ -1,39 +1,49 @@
 
 
-## Diagnóstico: por que o preview não aparece em `/users`
+## Objetivo
 
-A rota `/users` (e todo `_app/*`) depende de duas camadas de dados que estão falhando silenciosamente no ambiente de **preview do Lovable**:
+Permitir que você faça login no preview do Lovable com sua conta real (mesmas credenciais da produção) e veja/edite a aplicação com os dados reais carregados — exatamente como aparece no domínio publicado.
 
-### Causa raiz
+## Diagnóstico atual
 
-1. **`CustomerProvider` retorna `null` enquanto não casa um cliente** (`src/context/customer.tsx`, linha 57). Ele procura em `customers.json` por um item cujo `host` esteja contido em `window.location.host`. No preview o host é `id-preview--67380fdf-...lovable.app` — nenhum cliente cadastrado tem esse host, então usa `customers[0]` (Trend Finance). Isso até funciona, mas...
+Hoje o preview chama a API em `https://production.herobank.com.br` (definido em `src/lib/api.ts`), mas o login falha silenciosamente no preview porque:
 
-2. **A API depende de autenticação real** (`src/lib/api.ts` + `src/context/auth.tsx`). No preview não há sessão válida, então `_app.tsx` redireciona para `/auth/login` ou as queries falham. A página `/users` exige login.
+1. **CORS**: o backend `production.herobank.com.br` provavelmente só aceita requisições dos hosts cadastrados (`trendbet.com.br`, `trendbet.lovable.app`). O host de preview (`id-preview--67380fdf...lovable.app`) não está na allowlist, então as chamadas de `/users/authenticate` são bloqueadas.
+2. **Token não compartilhado**: mesmo se você logar no domínio publicado, o `localStorage` é por origem — o preview não enxerga o token salvo no domínio publicado.
+3. **Customer config**: `customers.json` casa por host. No preview, cai no fallback Trend Finance (já corrigido), então essa parte está ok.
 
-3. **`useIsOwem` perdeu o fallback de `localhost`** (último diff). Antes, em preview, alguns gates de UI assumiam comportamento "owem". Agora retorna sempre `false` no preview, o que pode esconder componentes ou interromper renderização condicional.
+## Plano de implementação
 
-4. O log do dev-server mostra um aviso sobre `tailwind.config.ts` ausente — é apenas um warning interno do Lovable (Tailwind v4 usa `src/styles.css`). **Não é** a causa da tela em branco.
+### 1. Confirmar/configurar a base URL da API no preview
+Verificar se `VITE_API_URL` está definida. Se a API de produção aceitar o host de preview via CORS, basta usar a mesma URL. Se não aceitar, você precisa:
+- **Opção A (recomendada)**: liberar no backend o host `*.lovable.app` no CORS allowlist.
+- **Opção B**: usar um proxy reverso no Vite (`server.proxy` em `vite.config.ts`) para que as chamadas saiam do mesmo domínio do preview e contornem CORS em dev.
 
-### Resumo
+### 2. Adicionar "Bridge de Token" para replicar a sessão publicada
+Criar uma rota utilitária `/auth/bridge` que aceita um token via query string (`?token=...`) e o salva no `localStorage` do preview, redirecionando depois para `/`. Fluxo:
+1. Você faz login normalmente em `https://trendbet.lovable.app`.
+2. Copia o valor de `@herobank:token` do localStorage (ou clica em um botão "Abrir no preview" que mostraremos no app publicado).
+3. Cola no preview via `https://id-preview--...lovable.app/auth/bridge?token=COLE_AQUI`.
+4. O preview salva o token e passa a se comportar como logado, replicando exatamente os dados da conta.
 
-O preview não mostra `/users` porque essa rota é protegida e exige login. No preview você é redirecionado para `/auth/login`. Para visualizar conteúdo autenticado é preciso fazer login com credenciais válidas da API configurada em `src/lib/api.ts`.
+### 3. (Opcional) Botão "Abrir no editor" no app publicado
+Adicionar no `app-layout` (visível apenas quando `host` é o domínio publicado) um botão que copia o token atual e abre o preview já com o token na URL.
 
-### Plano de correção (a aplicar quando aprovado)
+### 4. Garantir que o login direto no preview também funcione
+Se o CORS for liberado (passo 1), você pode simplesmente logar pelo formulário `/auth/login` do preview com email/senha — sem precisar do bridge.
 
-1. **Adicionar fallback de host de preview** em `src/context/customer.tsx` para garantir que `lovable.app` resolva para o cliente Trend Finance (já é o `customers[0]`, então funciona — apenas confirmar).
-2. **Restaurar suporte a `localhost`/preview em `useIsOwem`** se algum componente depender disso para renderizar (avaliar caso a caso).
-3. **Verificar `_app.tsx`**: confirmar para onde redireciona quando não há sessão e garantir que a tela de login carrega corretamente no preview.
-4. **Testar fluxo de login** com credenciais reais da API, ou criar um modo "demo" que exiba dados mock no preview sem exigir login.
+## Arquivos afetados
 
-### Detalhes técnicos
+- `src/lib/api.ts` — confirmar baseURL.
+- `vite.config.ts` — (opcional) adicionar proxy.
+- `src/routes/auth.bridge.tsx` — nova rota de bridge de token.
+- `src/components/layouts/app-layout.tsx` — (opcional) botão "Abrir no editor".
 
-- Arquivos envolvidos: `src/context/customer.tsx`, `src/context/auth.tsx`, `src/routes/_app.tsx`, `src/hooks/is-owem.tsx`, `src/lib/api.ts`.
-- Nenhuma alteração de schema/backend é necessária.
-- O warning do `tailwind.config.ts` pode ser ignorado (é apenas telemetria interna do Lovable, não afeta o build).
+## Pergunta antes de implementar
 
-### Pergunta para você
+Você consegue **liberar o CORS no backend** (`production.herobank.com.br`) para aceitar `*.lovable.app`? A resposta muda o caminho:
 
-Antes de eu aplicar correções, confirme:
-- Você quer **fazer login no preview** (precisa das credenciais da API existente), ou
-- Quer que eu adicione um **modo demo/mock** para mostrar a UI de `/users` sem autenticação?
+- **Sim** → faço apenas a bridge de token + login direto funciona no preview.
+- **Não / Não sei** → faço a bridge de token (você loga no publicado e cola no preview) — funciona sem mudanças no backend, mas é menos prático.
+- **Quero proxy** → configuro `vite.config.ts` para fazer proxy reverso (funciona no dev, mas não no preview hospedado do Lovable, então tem limitações).
 

@@ -1,7 +1,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { KPICard } from "@/components/shared/kpi-card";
 
-import { ArrowDownCircle, ArrowUpCircle, CalendarIcon, Wallet } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, CalendarIcon, UserPlus, Wallet } from "lucide-react";
 
 import { ChartAccount } from "./chart-account";
 import { Skeleton } from "@/components/ui/skeleton";

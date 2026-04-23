@@ -69,6 +69,17 @@ export function HomePage() {
     // refetchInterval: 1000 * 60, // 1 minute
   });
 
+  const { data: accountsPeriod, isLoading: isLoadingAccountsPeriod } =
+    useQuery<GetAccountStatisticsResponse>({
+      queryKey: ["accounts:statistics:period:backoffice", date],
+      enabled: date?.to && date.from ? true : false,
+      queryFn: () =>
+        getAccountStatistics({
+          startAt: date?.from,
+          endAt: date?.to,
+        }),
+    });
+
   // const { data: revenue } = useQuery<GetWithdrawStatisticsResponse>({
   //   queryKey: ["widhdraw:statistics:revenue:backoffice", dateGraph],
   //   enabled: dateGraph?.to && dateGraph.from ? true : false,

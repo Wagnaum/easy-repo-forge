@@ -185,9 +185,9 @@ export function HomePage() {
       )}
 
       {(user.role === "SUPER_ADMIN" || user.role === "ADMIN") && (
-        <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
-          {isLoadingWithdraw ? (
-            <div className="md:col-span-2 lg:col-span-3">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
+          {isLoadingWithdraw || isLoadingAccountsPeriod ? (
+            <div className="md:col-span-2 lg:col-span-4">
               <LottieLoader inline size={110} label="Carregando indicadores..." />
             </div>
           ) : (
@@ -218,6 +218,15 @@ export function HomePage() {
                 index={2}
                 icon={
                   <ArrowUpCircle className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />
+                }
+              />
+              <KPICard
+                title="Contas abertas"
+                value={(accountsPeriod?.accounts?.numberOfAccounts ?? 0).toLocaleString("pt-BR")}
+                subtitle="Contas abertas no período"
+                index={3}
+                icon={
+                  <UserPlus className="h-5 w-5" style={{ color: "var(--brand-accent-dark)" }} />
                 }
               />
             </>

@@ -10,11 +10,7 @@ import { TotalAccounts } from "./total-account";
 import { TransactionsCard } from "./transactions-card";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { endOfDay, format, startOfDay, startOfMonth } from "date-fns";
@@ -51,29 +47,27 @@ export function HomePage() {
     to: endOfDay(new Date()),
   });
 
-  const { data: withdraw, isLoading: isLoadingWithdraw } =
-    useQuery<GetWithdrawStatisticsResponse>({
-      enabled: date?.to && date.from ? true : false,
-      queryKey: ["widhdraw:statistics:backoffice", date],
-      queryFn: () =>
-        getWithdrawStatistics({
-          startAt: date?.from,
-          endAt: date?.to,
-        }),
-      // refetchInterval: 1000 * 60, // 1 minute
-    });
+  const { data: withdraw, isLoading: isLoadingWithdraw } = useQuery<GetWithdrawStatisticsResponse>({
+    enabled: date?.to && date.from ? true : false,
+    queryKey: ["widhdraw:statistics:backoffice", date],
+    queryFn: () =>
+      getWithdrawStatistics({
+        startAt: date?.from,
+        endAt: date?.to,
+      }),
+    // refetchInterval: 1000 * 60, // 1 minute
+  });
 
-  const { data: accounts, isLoading: isLoadingAccounts } =
-    useQuery<GetAccountStatisticsResponse>({
-      queryKey: ["accounts:statistics:backoffice", dateGraph],
-      enabled: dateGraph?.to && dateGraph.from ? true : false,
-      queryFn: () =>
-        getAccountStatistics({
-          startAt: dateGraph?.from,
-          endAt: dateGraph?.to,
-        }),
-      // refetchInterval: 1000 * 60, // 1 minute
-    });
+  const { data: accounts, isLoading: isLoadingAccounts } = useQuery<GetAccountStatisticsResponse>({
+    queryKey: ["accounts:statistics:backoffice", dateGraph],
+    enabled: dateGraph?.to && dateGraph.from ? true : false,
+    queryFn: () =>
+      getAccountStatistics({
+        startAt: dateGraph?.from,
+        endAt: dateGraph?.to,
+      }),
+    // refetchInterval: 1000 * 60, // 1 minute
+  });
 
   // const { data: revenue } = useQuery<GetWithdrawStatisticsResponse>({
   //   queryKey: ["widhdraw:statistics:revenue:backoffice", dateGraph],
@@ -113,8 +107,7 @@ export function HomePage() {
     link.remove();
   }
 
-
-  console.log('isOwem', isOwem);
+  console.log("isOwem", isOwem);
 
   return (
     <>
@@ -130,7 +123,7 @@ export function HomePage() {
                 variant={"outline"}
                 className={cn(
                   "w-[300px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
+                  !date && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -175,9 +168,7 @@ export function HomePage() {
         <div className="flex flex-1">
           {/* alinhar a direita o botão */}
           <div className="flex-1 flex justify-end">
-            <Button onClick={handleDownloadSplitReport}>
-              Download relatório de split
-            </Button>
+            <Button onClick={handleDownloadSplitReport}>Download relatório de split</Button>
           </div>
         </div>
       )}
@@ -202,14 +193,21 @@ export function HomePage() {
                 value={numberToCurrent(withdraw?.withdraw?.totalNormalAmount ?? 0)}
                 subtitle="Valores depositados no período"
                 index={1}
-                icon={<ArrowDownCircle className="h-5 w-5" style={{ color: "var(--brand-accent-dark)" }} />}
+                icon={
+                  <ArrowDownCircle
+                    className="h-5 w-5"
+                    style={{ color: "var(--brand-accent-dark)" }}
+                  />
+                }
               />
               <KPICard
                 title="Saídas"
                 value={numberToCurrent(withdraw?.withdraw?.totalFreeAmount ?? 0)}
                 subtitle="Valores sacados no período"
                 index={2}
-                icon={<ArrowUpCircle className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />}
+                icon={
+                  <ArrowUpCircle className="h-5 w-5" style={{ color: "var(--brand-primary)" }} />
+                }
               />
             </>
           )}
@@ -217,10 +215,7 @@ export function HomePage() {
       )}
 
       <div>
-        <Popover
-          open={openDatePickerGraph}
-          onOpenChange={setOpenDatePickerGraph}
-        >
+        <Popover open={openDatePickerGraph} onOpenChange={setOpenDatePickerGraph}>
           <div className="flex justify-end">
             <div className="flex justify-end">
               <PopoverTrigger asChild>
@@ -229,7 +224,7 @@ export function HomePage() {
                   variant={"outline"}
                   className={cn(
                     "w-[300px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
+                    !date && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -273,11 +268,7 @@ export function HomePage() {
       <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-6">
         <div className="xl:col-span-4">
           {!isLoadingWithdraw && (
-            <ChartAccount
-              statistics={accounts}
-              startAt={dateGraph?.from}
-              endAt={dateGraph?.to}
-            />
+            <ChartAccount statistics={accounts} startAt={dateGraph?.from} endAt={dateGraph?.to} />
           )}
         </div>
 

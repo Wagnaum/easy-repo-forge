@@ -1,9 +1,24 @@
 {
   "customers": [
     {
-      "id": "8a1713f0-9aa6-4fc0-ad70-6f2ca6d5ee93",
+      "id": "4d7338a3-3c9d-4c7a-860f-2ed82709d358",
       "ref": "trend-finance",
       "host": "localhost",
+      "name": "Trend Finance",
+      "logo": {
+        "white": "/logo-trend-dark.png",
+        "dark": "/logo-trend-light.png",
+        "login": ""
+      },
+      "colors": {
+        "loginBackground": "#ffffff",
+        "buttonBackground": "#0a0a0a"
+      }
+    },
+    {
+      "id": "4d7338a3-3c9d-4c7a-860f-2ed82709d358",
+      "ref": "trend-finance",
+      "host": "trendbet.com.br",
       "name": "Trend Finance",
       "logo": {
         "white": "/logo-trend-dark.png",

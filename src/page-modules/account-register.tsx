@@ -1,16 +1,7 @@
-import {
-  getAccountByInviteId,
-  GetAccountByInviteIdResponse,
-} from "@/api/get-user-by-invite-id";
+import { getAccountByInviteId, GetAccountByInviteIdResponse } from "@/api/get-user-by-invite-id";
 import { Format } from "@/components/input/format";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -151,9 +142,7 @@ export function AccountRegisterPage() {
         <Card className="mx-auto max-w-md lg:w-full">
           <CardHeader>
             <CardTitle className="text-xl">Erro ao carregar</CardTitle>
-            <CardDescription>
-              Ocorreu um erro ao carregar as informações do convite
-            </CardDescription>
+            <CardDescription>Ocorreu um erro ao carregar as informações do convite</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4">
@@ -256,7 +245,7 @@ export function AccountRegisterPage() {
       const birthDateFormatted = birthDate.split("/");
       // const documentDateIssueFormatted = documentDataExpedicao.split("/");
       const birthDatePrepated = new Date(
-        `${birthDateFormatted[2]}-${birthDateFormatted[1]}-${birthDateFormatted[0]}`
+        `${birthDateFormatted[2]}-${birthDateFormatted[1]}-${birthDateFormatted[0]}`,
       );
       // const documentDateIssueFormattedPrepated = new Date(
       //   `${documentDateIssueFormatted[2]}-${documentDateIssueFormatted[1]}-${documentDateIssueFormatted[0]}`
@@ -476,19 +465,13 @@ export function AccountRegisterPage() {
   return (
     <>
       <div className="flex min-h-screen flex-1 flex-col items-center p-3 sm:p-6 lg:p-8 bg-white">
-        <img
-          className="mx-auto h-36 w-auto"
-          src={customer.logo.dark}
-          alt="Hero Bank"
-        />
+        <img className="mx-auto h-36 w-auto" src={customer.logo.dark} alt="Hero Bank" />
 
         {result?.account?.status === "PENDING" && (
           <Card className="mx-auto max-w-md lg:w-full">
             <CardHeader>
               <CardTitle className="text-xl">Complete seu cadastro</CardTitle>
-              <CardDescription>
-                Preencha os campos abaixo para criar sua conta
-              </CardDescription>
+              <CardDescription>Preencha os campos abaixo para criar sua conta</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmitForm}>
@@ -520,9 +503,7 @@ export function AccountRegisterPage() {
                         </>
                       ) : (
                         <>
-                          <Label htmlFor="first-name">
-                            Nome completo (Igual do documento)
-                          </Label>
+                          <Label htmlFor="first-name">Nome completo (Igual do documento)</Label>
                           <Input
                             id="first-name"
                             required
@@ -612,11 +593,7 @@ export function AccountRegisterPage() {
                       </>
                     )}
                   </div> */}
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={loadingForm}
-                  >
+                  <Button type="submit" className="w-full" disabled={loadingForm}>
                     {loadingForm ? (
                       <span>
                         <Loader2 className="animate-spin" />
@@ -641,9 +618,7 @@ export function AccountRegisterPage() {
           <Card className="mx-auto max-w-xl w-full">
             <CardHeader>
               <CardTitle className="text-xl">Dados pessoais</CardTitle>
-              <CardDescription>
-                Preencha os campos abaixo para criar sua conta
-              </CardDescription>
+              <CardDescription>Preencha os campos abaixo para criar sua conta</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmitFormIndividual}>
@@ -681,9 +656,7 @@ export function AccountRegisterPage() {
                           <Input
                             id="phone"
                             value={phone}
-                            onChange={(e) =>
-                              setPhone(Format.Phone(e.target.value))
-                            }
+                            onChange={(e) => setPhone(Format.Phone(e.target.value))}
                           />
                         </>
                       )}
@@ -753,9 +726,7 @@ export function AccountRegisterPage() {
                             id="birthdate"
                             placeholder="10/03/1984"
                             value={birthDate}
-                            onChange={(e) =>
-                              setBirthDate(Format.Date(e.target.value))
-                            }
+                            onChange={(e) => setBirthDate(Format.Date(e.target.value))}
                           />
                         </>
                       )}
@@ -768,9 +739,7 @@ export function AccountRegisterPage() {
                         </>
                       ) : (
                         <>
-                          <Label htmlFor="mother-name">
-                            Nome da mãe (Igual do documento)
-                          </Label>
+                          <Label htmlFor="mother-name">Nome da mãe (Igual do documento)</Label>
                           <Input
                             id="mother-name"
                             placeholder="Nome da mãe"
@@ -782,11 +751,7 @@ export function AccountRegisterPage() {
                     </div>
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={loadingForm}
-                  >
+                  <Button type="submit" className="w-full" disabled={loadingForm}>
                     {loadingForm ? (
                       <span>
                         <Loader2 className="animate-spin" />
@@ -805,9 +770,7 @@ export function AccountRegisterPage() {
           <Card className="mx-auto max-w-xl lg:w-full">
             <CardHeader>
               <CardTitle className="text-xl">Endereço</CardTitle>
-              <CardDescription>
-                Preencha os campos abaixo para criar sua conta
-              </CardDescription>
+              <CardDescription>Preencha os campos abaixo para criar sua conta</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmitFormAddress}>
@@ -826,9 +789,7 @@ export function AccountRegisterPage() {
                           type="cep"
                           placeholder="00000-000"
                           value={zipCode}
-                          onChange={(e) =>
-                            setZipCode(Format.ZipCode(e.target.value))
-                          }
+                          onChange={(e) => setZipCode(Format.ZipCode(e.target.value))}
                         />
                       </>
                     )}
@@ -919,11 +880,7 @@ export function AccountRegisterPage() {
                       ) : (
                         <>
                           <Label htmlFor="city">Cidade</Label>
-                          <Input
-                            id="city"
-                            value={city}
-                            onChange={(e) => setCity(e.target.value)}
-                          />
+                          <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} />
                         </>
                       )}
                     </div>
@@ -947,11 +904,7 @@ export function AccountRegisterPage() {
                     </div>
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={loadingForm}
-                  >
+                  <Button type="submit" className="w-full" disabled={loadingForm}>
                     {loadingForm ? (
                       <span>
                         <Loader2 className="animate-spin" />
@@ -972,9 +925,9 @@ export function AccountRegisterPage() {
               <>
                 <div className="mb-4 rounded-lg border-2 border-yellow-500 bg-yellow-50 p-4 dark:bg-yellow-900/20 max-w-xl w-full">
                   <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-200">
-                    ⚠️ <span className="font-bold">Importante:</span> Primeiro,
-                    verifique e confirme seu e-mail. Somente depois de confirmar
-                    o e-mail, você poderá enviar os documentos.
+                    ⚠️ <span className="font-bold">Importante:</span> Primeiro, verifique e confirme
+                    seu e-mail. Somente depois de confirmar o e-mail, você poderá enviar os
+                    documentos.
                     <br />
                     <span className="font-bold uppercase text-yellow-700 dark:text-yellow-300">
                       NÃO envie os documentos antes de confirmar o e-mail.
@@ -1023,14 +976,12 @@ export function AccountRegisterPage() {
           <Card className="mx-auto max-w-md lg:w-full">
             <CardHeader>
               <CardTitle className="text-xl">Parabéns</CardTitle>
-              <CardDescription>
-                Seu cadastro foi concluído com sucesso
-              </CardDescription>
+              <CardDescription>Seu cadastro foi concluído com sucesso</CardDescription>
             </CardHeader>
             <CardContent>
               <p>
-                Aguarde enquanto processamos a análise dos seus dados. Dentro de
-                um 1 dia, enviaremos a resposta diretamente para o seu e-mail.
+                Aguarde enquanto processamos a análise dos seus dados. Dentro de um 1 dia,
+                enviaremos a resposta diretamente para o seu e-mail.
               </p>
 
               <Button onClick={handleLogout} className="mt-4">
@@ -1045,14 +996,12 @@ export function AccountRegisterPage() {
           <Card className="mx-auto max-w-md lg:w-full">
             <CardHeader>
               <CardTitle className="text-xl">Conta não aprovada!</CardTitle>
-              <CardDescription>
-                Infelizmente não conseguimos aprovar sua conta
-              </CardDescription>
+              <CardDescription>Infelizmente não conseguimos aprovar sua conta</CardDescription>
             </CardHeader>
             <CardContent>
               <p>
-                Infelizmente não conseguimos aprovar sua conta. Você pode tentar
-                novamente dentro de 60 dias.
+                Infelizmente não conseguimos aprovar sua conta. Você pode tentar novamente dentro de
+                60 dias.
               </p>
 
               <Button onClick={handleLogout} className="mt-4">

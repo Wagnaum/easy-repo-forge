@@ -7,6 +7,6 @@ export function useIsOwem(): boolean {
     }
 
     const hostname = window.location.hostname;
-    return hostname.includes("distritopay.com") || hostname.includes("localhost");
+    return hostname.includes("distritopay.com");
   }, []);
 }

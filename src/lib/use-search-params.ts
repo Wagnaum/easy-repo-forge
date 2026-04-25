@@ -43,11 +43,19 @@ export function useSearchParams(): [URLSearchParams, (next: SetParamsArg) => voi
         return;
       }
 
-      navigate({
-        to: location.pathname,
-        search: obj,
-        replace: false,
-      });
+      // Bypass TanStack Router's JSON-encoded search serialization
+      // (which would turn { page: "1" } into ?page=%221%22) and write
+      // a clean URLSearchParams string directly to history. We then
+      // dispatch popstate so the router/useLocation re-reads the URL.
+      if (typeof window !== "undefined") {
+        const url = nextSearch
+          ? `${location.pathname}?${nextSearch}`
+          : location.pathname;
+        window.history.pushState({}, "", url);
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      } else {
+        navigate({ to: location.pathname, search: obj, replace: false });
+      }
     },
     [navigate, location.pathname, search],
   );

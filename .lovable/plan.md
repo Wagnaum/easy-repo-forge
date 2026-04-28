@@ -1,55 +1,38 @@
-## Adequar fluxo de Pix à API oficial da Stric
+## Objetivo
 
-A doc oficial mostra que o backend mudou de assinatura. O código atual usa endpoints/payloads/respostas antigos, e isso provavelmente é a causa das falhas no fluxo de consulta + pagamento.
+Confirmar que o fix aplicado em `IntlCurrencyInput` (mover `component = "input"` para o destructuring dos parâmetros) também resolve o erro "Element type is invalid" no fluxo de pagamento via QR Code (`pay-qrcode.tsx`).
 
-### Diferenças encontradas
+## Análise do código
 
-#### 1. Consultar chave Pix
+- `src/page-modules/account-details/pay-qrcode.tsx` (linha 171) usa `<IntlCurrencyInput value={...} onChange={...} />` **sem** passar a prop `component`, exatamente igual ao `transfer-pix-out.tsx`.
+- O fix anterior em `src/components/react-intl-currency-input/intl-currency-input.tsx` já garante o default `component: InputComponent = "input"` direto na assinatura da função (não mais via `defaultProps`, que React 19 ignora em function components).
+- Portanto, **nenhuma mudança de código adicional é necessária** — o mesmo fix cobre os dois fluxos.
 
-| Campo | Código atual | Doc Stric |
-|---|---|---|
-| Endpoint | `POST /accounts/{id}/keys/info` | `POST /accounts/{id}/pix/key-info` |
-| Header | — | `x-tenant-id` obrigatório |
-| Resposta (raiz) | `{ info: { ... } }` | `{ key: { ... } }` |
-| Campos retornados | `id, key, type, document, name, agency, accountNumber, accountType, personType, pspName` | `id, key, ispb, document, name, bankName, bankCode, endToEndId` |
+## Limpeza opcional (recomendada)
 
-#### 2. Realizar pagamento Pix
+O arquivo `intl-currency-input.tsx` ainda mantém os blocos legados `IntlCurrencyInput.propTypes` e `IntlCurrencyInput.defaultProps`. Eles não causam mais o bug (porque os defaults agora vêm do destructuring), mas:
 
-| Campo | Código atual | Doc Stric |
-|---|---|---|
-| Body | `{ id, key, amount }` | `{ keyInfoId, amount, pin }` |
-| Resposta | `responsePaymentQrCode` (genérico) | `{ transaction: { id, amount, status, ... } }` |
+1. `defaultProps` em function components emite warning no console em React 18+ e é totalmente ignorado em React 19.
+2. `propTypes` adiciona dependência desnecessária em `prop-types`.
 
-O código atual **não envia `pin`**, que agora é obrigatório.
+Proposta:
+- Remover os blocos `IntlCurrencyInput.propTypes = {...}` e `IntlCurrencyInput.defaultProps = {...}`.
+- Remover o import de `prop-types` e a função `checkCurrentPropType`.
+- Manter toda a lógica de runtime intacta (só limpeza de código morto).
 
-### Alterações propostas
+## Passos de validação (após aprovar o plano)
 
-**`src/page-modules/account-details/transfer-pix-out.tsx`**
-- Trocar URL para `/accounts/{accountId}/pix/key-info`.
-- Atualizar tipo `ValidatePixInfoResponse` para `{ key: { id, key, ispb, document, name, bankName, bankCode, endToEndId } }`.
-- Atualizar a UI do recebedor:
-  - "Banco": `bankName` (ao invés de `pspName`).
-  - Remover campos inexistentes (`accountNumber`, `pspName` formatado como documento — estava errado).
-  - Mostrar `bankName` + `bankCode` no lugar de "Conta".
-- Pagamento:
-  - Body: `{ keyInfoId: pixInfoData.key.id, amount: value, pin }`.
-  - Adicionar campo de **PIN transacional** no formulário (input password, 4–6 dígitos).
-  - Validar PIN antes de submeter.
-- Mensagem de erro: a doc retorna `{ code, error, message }` — o `parseError` atual já lê `message`, então funciona.
+1. Aplicar a limpeza opcional em `intl-currency-input.tsx`.
+2. Abrir o preview em `/accounts/<id>` → aba "Pagar QR Code".
+3. Colar um código Copia-e-Cola válido e clicar em "Continuar".
+4. Confirmar que:
+   - Os dados do recebedor aparecem.
+   - O campo "Valor" (IntlCurrencyInput) renderiza sem o erro "Element type is invalid".
+   - "Algo deu errado" não aparece mais.
+5. Reportar o resultado.
 
-**`src/lib/api.ts`** (verificar)
-- Confirmar se o axios já injeta `x-tenant-id`. Se não, adicionar via interceptor (precisa saber de onde vem o tenant — provavelmente já está, já que outros endpoints funcionam).
+## Arquivos afetados
 
-### Fora de escopo (manter como está)
+- `src/components/react-intl-currency-input/intl-currency-input.tsx` (limpeza opcional de `propTypes`/`defaultProps`)
 
-- Cadastro/listagem/remoção de chaves no sidebar — não faz parte dessa página de doc, manter intocado por ora.
-- Endpoint de transações — a doc desse fluxo só cobre key-info e payment.
-
-### Risco
-
-- Se o backend ainda aceitar o endpoint antigo `/keys/info` em paralelo, o app continua funcionando depois da mudança. Se não aceitar, a mudança **conserta** o fluxo quebrado.
-- O campo `pin` é novo: se o usuário não tiver PIN cadastrado, o pagamento vai falhar com erro do backend — vou propagar a mensagem no toast.
-
-### Pergunta
-
-Você quer que eu também já atualize o cadastro/remoção de chaves para os endpoints novos (`/pix/keys` se for o caso), ou foco só na consulta + pagamento agora? Posso buscar a doc dessas rotas também antes de mexer.
+Nenhuma mudança em `pay-qrcode.tsx` ou `transfer-pix-out.tsx`.

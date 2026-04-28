@@ -1,63 +1,42 @@
-## Diagnóstico
+## Testar fluxo de consulta de chave Pix e listagem de transações
 
-A paginação na página **/accounts** (e em todas as outras: usuários, gateways, zero-rate) está quebrada por causa de um bug no shim `src/lib/use-search-params.ts`.
+Quero validar o fluxo de ponta a ponta na conta atualmente aberta (`/accounts/184e9421-c7d4-417a-b741-e4ddfaad15ec`) usando a automação do browser, sem disparar pagamentos reais.
 
-### Sintoma observável
+### Escopo do teste
 
-URL atual: `/accounts?page=%221%22` — o valor está com **aspas codificadas** (`"1"` em vez de `1`). Isso quebra a leitura:
+1. **Aba Transações** (`TransactionsAccount`)
+   - Verificar se a lista carrega via `GET /accounts/{id}/transactions`.
+   - Testar paginação (Primeira / Anterior / Próxima / Última) — confirmando que a correção recente do `useSearchParams` funciona aqui também.
+   - Verificar formatação de valores, tipo, status e data.
 
-```ts
-const pageParam = searchParams.get("page"); // retorna `"1"` (string com aspas literais)
-const pageIndex = Number.isFinite(Number(pageParam)) ? Number(pageParam) : 0;
-// Number('"1"') === NaN → cai no fallback 0
-```
+2. **Sidebar "Minhas chaves Pix"** (`GetAccountKeysSidebar`)
+   - Verificar carregamento via `GET /accounts/{id}/keys`.
+   - Testar botão "Copiar" da chave.
+   - **Não** vou criar nem deletar chaves (ações destrutivas/persistentes).
 
-Resultado: clicar "Próxima página" muda a URL mas `pageIndex` sempre volta para `0`, então a tabela nunca avança de página.
+3. **Aba Transferir → Consulta de chave Pix** (`TransferPixOutSidebar`)
+   - Inserir uma chave Pix de teste no campo e clicar em "Continuar".
+   - Validar que `POST /accounts/{id}/keys/info` retorna nome, documento, conta e PSP do recebedor.
+   - **Parar antes do botão "Pagar"** — não vou executar pagamento real.
+   - Caso o usuário queira, posso testar com erro (chave inválida) para ver o toast.
 
-### Causa raiz
+### O que preciso de você
 
-Em `src/lib/use-search-params.ts` (linha 46-50), o shim chama:
+Como esse fluxo exige sessão autenticada no preview e uma chave Pix válida para consulta:
 
-```ts
-navigate({ to: location.pathname, search: obj, replace: false });
-```
+- **Login**: você precisa estar logado no preview do Lovable antes de eu rodar o teste (a sessão é compartilhada com o browser).
+- **Chave Pix de teste**: me informe uma chave (CPF/EVP/email/telefone) que eu possa usar só para o `keys/info`. Sugestão segura: usar uma das suas próprias chaves listadas no sidebar dessa conta.
 
-O TanStack Router por padrão **stringifica cada valor de search com `JSON.stringify`**. Como `obj` tem `{ page: "1" }`, o valor `"1"` (string) é serializado como `"\"1\""` e a URL fica `?page=%221%22`. Na próxima leitura via `URLSearchParams`, o valor vem como `"1"` literal com aspas → `Number()` falha.
+### Restrições
 
-Além disso, há uma inconsistência menor: `pageIndex` é 0-based no front, mas o componente `Pagination` mostra "Página `pageIndex + 1`". Com a URL refletindo o índice 0-based, fica confuso (`page=0` = "Página 1"). Vou manter 0-based para não quebrar a API (que recebe `page: pageIndex ?? 0`), mas corrigir a serialização.
+- **Não vou clicar em "Pagar"** nem em "Deletar chave" — só ações de leitura/consulta.
+- Se a consulta retornar erro, vou reportar a mensagem e o status da request, sem alterar código.
+- Se encontrar bug real (ex.: paginação quebrada, parser de resposta), eu paro e reporto antes de propor correção.
 
-## Correção
+### Entregáveis
 
-### 1. `src/lib/use-search-params.ts` — usar `window.history` em vez de `navigate()`
-
-Substituir o `navigate()` do TanStack (que faz JSON-encode) por uma atualização direta da URL via `window.history.pushState` + um `dispatchEvent` para o TanStack Router reagir. Alternativamente, usar `router.navigate` com search já como string crua não é suportado pelo TanStack.
-
-Abordagem mais limpa e compatível: **codificar manualmente a query string com `URLSearchParams.toString()` e usar `window.history.pushState`**, então notificar o router via um evento de popstate sintético para que `useLocation` reaja.
-
-```ts
-const qs = new URLSearchParams(obj).toString();
-const url = qs ? `${location.pathname}?${qs}` : location.pathname;
-window.history.pushState({}, "", url);
-window.dispatchEvent(new PopStateEvent("popstate"));
-```
-
-Isso mantém a API compatível com `react-router-dom` (que é o objetivo do shim) e produz URLs limpas: `?page=1&filter=joao`.
-
-### 2. Verificar leitura
-
-Após a correção, `searchParams.get("page")` retornará `"1"` (sem aspas), `Number("1") === 1`, e a paginação funciona em **todas** as páginas que usam o shim (accounts, users, gateways, zero-rate, transactions, register, etc.) sem precisar tocar em cada uma.
-
-### 3. Sem mudanças em arquivos de página
-
-Os componentes `AccountsPage`, `UsersPage`, etc. já estão corretos — o bug é puramente no shim.
-
-## Resultado esperado
-
-- URL fica `?page=1` em vez de `?page=%221%22`
-- Botões "Próxima/Anterior/Primeira/Última" funcionam em /accounts
-- Filtros (status, filter) também passam a serializar como strings limpas
-- Correção propaga automaticamente para /users, /gateways, /zero-rate
-
-## Arquivos alterados
-
-- `src/lib/use-search-params.ts` (única mudança)
+Relatório com:
+- Status de cada etapa (✅/❌)
+- Screenshots das telas-chave (lista de transações, dados do recebedor após consulta de chave)
+- Requests/responses observados na aba network
+- Qualquer bug encontrado com sugestão de correção (em plano separado)

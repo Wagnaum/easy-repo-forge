@@ -95,10 +95,6 @@ export function TransferPixOutSidebar({
       toast.error("O valor deve ser maior que zero.", toastStyle.error);
       return;
     }
-    if (!pin || pin.length < 4) {
-      toast.error("Informe seu PIN transacional.", toastStyle.error);
-      return;
-    }
     if (!pixInfoData?.info?.id) {
       toast.error("Consulte a chave Pix novamente.", toastStyle.error);
       return;
@@ -107,9 +103,8 @@ export function TransferPixOutSidebar({
     try {
       setLoadingPaymentPix(true);
       await api.post(`/accounts/${data?.account?.id}/pix/payment`, {
-        keyInfoId: pixInfoData.info.id,
+        id: pixInfoData.info.id,
         amount: value,
-        pin,
       });
 
       toast.success("Pagamento realizado com sucesso!", {
@@ -118,7 +113,6 @@ export function TransferPixOutSidebar({
       });
       await refetch();
       setValue(0);
-      setPin("");
       setPixInfoData(null);
       setKey("");
     } catch (err) {
@@ -132,7 +126,6 @@ export function TransferPixOutSidebar({
   function handleResetKey() {
     setPixInfoData(null);
     setValue(0);
-    setPin("");
   }
 
   return (

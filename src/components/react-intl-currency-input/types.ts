@@ -239,21 +239,21 @@ export type IntlFormatterConfig = {
 };
 
 export type IntlCurrencyInputProps = React.PropsWithChildren & {
-  component: React.ElementType;
+  component?: React.ElementType;
   defaultValue?: number;
   id: string;
   value: number;
   max?: number;
   disabled?: boolean;
-  currency: string;
-  config: IntlFormatterConfig;
-  autoFocus: boolean;
-  autoSelect: boolean;
-  autoReset: boolean;
+  currency?: string;
+  config?: IntlFormatterConfig;
+  autoFocus?: boolean;
+  autoSelect?: boolean;
+  autoReset?: boolean;
   className?: string;
-  onChange: (...args: any[]) => void;
-  onBlur: (...args: any[]) => void;
-  onFocus: (...args: any[]) => void;
-  onKeyPress: (...args: any[]) => void;
-  inputRef: null | ((...args: any[]) => any) | Record<string, any>;
+  onChange?: (...args: any[]) => void;
+  onBlur?: (...args: any[]) => void;
+  onFocus?: (...args: any[]) => void;
+  onKeyPress?: (...args: any[]) => void;
+  inputRef?: null | ((...args: any[]) => any) | Record<string, any>;
 };

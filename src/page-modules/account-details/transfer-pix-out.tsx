@@ -182,8 +182,8 @@ export function TransferPixOutSidebar({
                 <Label htmlFor="receipt">Dados do recebedor</Label>
                 <Input
                   id="receipt"
-                  value={`${pixInfoData.key.name} - ${formatDocument(
-                    pixInfoData.key.document
+                  value={`${pixInfoData.info.name} - ${formatDocument(
+                    pixInfoData.info.document
                   )}`}
                   disabled
                 />
@@ -192,9 +192,9 @@ export function TransferPixOutSidebar({
                   <Label htmlFor="bank">Banco</Label>
                   <Input
                     id="bank"
-                    value={`${pixInfoData.key.bankName}${
-                      pixInfoData.key.bankCode
-                        ? ` (${pixInfoData.key.bankCode})`
+                    value={`${pixInfoData.info.pspName}${
+                      pixInfoData.info.institution
+                        ? ` (${pixInfoData.info.institution})`
                         : ""
                     }`}
                     disabled

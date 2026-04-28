@@ -1,42 +1,55 @@
-## Testar fluxo de consulta de chave Pix e listagem de transações
+## Adequar fluxo de Pix à API oficial da Stric
 
-Quero validar o fluxo de ponta a ponta na conta atualmente aberta (`/accounts/184e9421-c7d4-417a-b741-e4ddfaad15ec`) usando a automação do browser, sem disparar pagamentos reais.
+A doc oficial mostra que o backend mudou de assinatura. O código atual usa endpoints/payloads/respostas antigos, e isso provavelmente é a causa das falhas no fluxo de consulta + pagamento.
 
-### Escopo do teste
+### Diferenças encontradas
 
-1. **Aba Transações** (`TransactionsAccount`)
-   - Verificar se a lista carrega via `GET /accounts/{id}/transactions`.
-   - Testar paginação (Primeira / Anterior / Próxima / Última) — confirmando que a correção recente do `useSearchParams` funciona aqui também.
-   - Verificar formatação de valores, tipo, status e data.
+#### 1. Consultar chave Pix
 
-2. **Sidebar "Minhas chaves Pix"** (`GetAccountKeysSidebar`)
-   - Verificar carregamento via `GET /accounts/{id}/keys`.
-   - Testar botão "Copiar" da chave.
-   - **Não** vou criar nem deletar chaves (ações destrutivas/persistentes).
+| Campo | Código atual | Doc Stric |
+|---|---|---|
+| Endpoint | `POST /accounts/{id}/keys/info` | `POST /accounts/{id}/pix/key-info` |
+| Header | — | `x-tenant-id` obrigatório |
+| Resposta (raiz) | `{ info: { ... } }` | `{ key: { ... } }` |
+| Campos retornados | `id, key, type, document, name, agency, accountNumber, accountType, personType, pspName` | `id, key, ispb, document, name, bankName, bankCode, endToEndId` |
 
-3. **Aba Transferir → Consulta de chave Pix** (`TransferPixOutSidebar`)
-   - Inserir uma chave Pix de teste no campo e clicar em "Continuar".
-   - Validar que `POST /accounts/{id}/keys/info` retorna nome, documento, conta e PSP do recebedor.
-   - **Parar antes do botão "Pagar"** — não vou executar pagamento real.
-   - Caso o usuário queira, posso testar com erro (chave inválida) para ver o toast.
+#### 2. Realizar pagamento Pix
 
-### O que preciso de você
+| Campo | Código atual | Doc Stric |
+|---|---|---|
+| Body | `{ id, key, amount }` | `{ keyInfoId, amount, pin }` |
+| Resposta | `responsePaymentQrCode` (genérico) | `{ transaction: { id, amount, status, ... } }` |
 
-Como esse fluxo exige sessão autenticada no preview e uma chave Pix válida para consulta:
+O código atual **não envia `pin`**, que agora é obrigatório.
 
-- **Login**: você precisa estar logado no preview do Lovable antes de eu rodar o teste (a sessão é compartilhada com o browser).
-- **Chave Pix de teste**: me informe uma chave (CPF/EVP/email/telefone) que eu possa usar só para o `keys/info`. Sugestão segura: usar uma das suas próprias chaves listadas no sidebar dessa conta.
+### Alterações propostas
 
-### Restrições
+**`src/page-modules/account-details/transfer-pix-out.tsx`**
+- Trocar URL para `/accounts/{accountId}/pix/key-info`.
+- Atualizar tipo `ValidatePixInfoResponse` para `{ key: { id, key, ispb, document, name, bankName, bankCode, endToEndId } }`.
+- Atualizar a UI do recebedor:
+  - "Banco": `bankName` (ao invés de `pspName`).
+  - Remover campos inexistentes (`accountNumber`, `pspName` formatado como documento — estava errado).
+  - Mostrar `bankName` + `bankCode` no lugar de "Conta".
+- Pagamento:
+  - Body: `{ keyInfoId: pixInfoData.key.id, amount: value, pin }`.
+  - Adicionar campo de **PIN transacional** no formulário (input password, 4–6 dígitos).
+  - Validar PIN antes de submeter.
+- Mensagem de erro: a doc retorna `{ code, error, message }` — o `parseError` atual já lê `message`, então funciona.
 
-- **Não vou clicar em "Pagar"** nem em "Deletar chave" — só ações de leitura/consulta.
-- Se a consulta retornar erro, vou reportar a mensagem e o status da request, sem alterar código.
-- Se encontrar bug real (ex.: paginação quebrada, parser de resposta), eu paro e reporto antes de propor correção.
+**`src/lib/api.ts`** (verificar)
+- Confirmar se o axios já injeta `x-tenant-id`. Se não, adicionar via interceptor (precisa saber de onde vem o tenant — provavelmente já está, já que outros endpoints funcionam).
 
-### Entregáveis
+### Fora de escopo (manter como está)
 
-Relatório com:
-- Status de cada etapa (✅/❌)
-- Screenshots das telas-chave (lista de transações, dados do recebedor após consulta de chave)
-- Requests/responses observados na aba network
-- Qualquer bug encontrado com sugestão de correção (em plano separado)
+- Cadastro/listagem/remoção de chaves no sidebar — não faz parte dessa página de doc, manter intocado por ora.
+- Endpoint de transações — a doc desse fluxo só cobre key-info e payment.
+
+### Risco
+
+- Se o backend ainda aceitar o endpoint antigo `/keys/info` em paralelo, o app continua funcionando depois da mudança. Se não aceitar, a mudança **conserta** o fluxo quebrado.
+- O campo `pin` é novo: se o usuário não tiver PIN cadastrado, o pagamento vai falhar com erro do backend — vou propagar a mensagem no toast.
+
+### Pergunta
+
+Você quer que eu também já atualize o cadastro/remoção de chaves para os endpoints novos (`/pix/keys` se for o caso), ou foco só na consulta + pagamento agora? Posso buscar a doc dessas rotas também antes de mexer.

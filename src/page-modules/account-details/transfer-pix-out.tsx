@@ -18,19 +18,16 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import IntlCurrencyInput from "@/components/react-intl-currency-input/intl-currency-input";
 
-interface ValitatePixInfoResponse {
-  info: {
+interface ValidatePixKeyInfoResponse {
+  key: {
     id: string;
-    accountId: string;
     key: string;
-    type: string | null;
+    ispb: string;
     document: string;
     name: string;
-    agency: string | null;
-    accountNumber: string | null;
-    accountType: string | null;
-    personType: string | null;
-    pspName: string;
+    bankName: string;
+    bankCode: string;
+    endToEndId: string;
   };
 }
 
@@ -44,36 +41,41 @@ export function TransferPixOutSidebar({
   refetch,
 }: PayQrCodeAccountProps) {
   const [key, setKey] = useState<string>("");
+  const [pin, setPin] = useState<string>("");
 
-  const [loadingValidateQrCode, setLoadingValidateQrCode] = useState(false);
+  const [loadingValidateKey, setLoadingValidateKey] = useState(false);
   const [pixInfoData, setPixInfoData] =
-    useState<ValitatePixInfoResponse | null>();
+    useState<ValidatePixKeyInfoResponse | null>();
   const [loadingPaymentPix, setLoadingPaymentPix] = useState(false);
 
   const [value, setValue] = useState(0);
 
-  const [, setQrCodePaymentData] = useState<object | null>();
+  async function validateKey() {
+    if (loadingValidateKey) {
+      return;
+    }
 
-  async function validateQrCode() {
-    if (loadingValidateQrCode) {
+    if (!key.trim()) {
+      toast.error("Informe a chave Pix.", toastStyle.error);
       return;
     }
 
     try {
-      setLoadingValidateQrCode(true);
-      const { data: responsePixInfo } = await api.post<ValitatePixInfoResponse>(
-        `/accounts/${data?.account?.id}/keys/info`,
-        {
-          key,
-        }
-      );
+      setLoadingValidateKey(true);
+      const { data: responsePixInfo } =
+        await api.post<ValidatePixKeyInfoResponse>(
+          `/accounts/${data?.account?.id}/pix/key-info`,
+          {
+            key: key.trim(),
+          }
+        );
 
       setPixInfoData(responsePixInfo);
     } catch (err) {
       const error = parseError(err);
       toast.error(error.message, toastStyle.error);
     } finally {
-      setLoadingValidateQrCode(false);
+      setLoadingValidateKey(false);
     }
   }
 
@@ -85,25 +87,30 @@ export function TransferPixOutSidebar({
       toast.error("O valor deve ser maior que zero.", toastStyle.error);
       return;
     }
+    if (!pin || pin.length < 4) {
+      toast.error("Informe seu PIN transacional.", toastStyle.error);
+      return;
+    }
+    if (!pixInfoData?.key?.id) {
+      toast.error("Consulte a chave Pix novamente.", toastStyle.error);
+      return;
+    }
 
     try {
       setLoadingPaymentPix(true);
-      const { data: responsePaymentQrCode } = await api.post(
-        `/accounts/${data?.account?.id}/pix/payment`,
-        {
-          id: pixInfoData?.info.id,
-          key,
-          amount: value,
-        }
-      );
+      await api.post(`/accounts/${data?.account?.id}/pix/payment`, {
+        keyInfoId: pixInfoData.key.id,
+        amount: value,
+        pin,
+      });
 
-      setQrCodePaymentData(responsePaymentQrCode);
       toast.success("Pagamento realizado com sucesso!", {
         ...toastStyle.success,
         duration: 5000,
       });
       await refetch();
       setValue(0);
+      setPin("");
       setPixInfoData(null);
       setKey("");
     } catch (err) {
@@ -114,23 +121,14 @@ export function TransferPixOutSidebar({
     }
   }
 
+  function handleResetKey() {
+    setPixInfoData(null);
+    setValue(0);
+    setPin("");
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      {/* Mensagem de aviso sobre limitação de transferências */}
-      {/* <div className="col-span-2 mb-4">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start space-x-3">
-          <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold text-amber-800 mb-1">
-              ⚠️ Atenção!
-            </h3>
-            <p className="text-sm text-amber-700">
-              No momento só estão disponíveis transferências para contas bancárias de mesma titularidade.
-            </p>
-          </div>
-        </div>
-      </div> */}
-      
       <Card className="col-span-2 rounded-md">
         <CardHeader>
           <CardTitle>Realizar Pix</CardTitle>
@@ -151,13 +149,14 @@ export function TransferPixOutSidebar({
                 id="code"
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
+                disabled={!!pixInfoData}
               />
               {!pixInfoData && (
                 <Button
-                  onClick={validateQrCode}
-                  disabled={loadingValidateQrCode}
+                  onClick={validateKey}
+                  disabled={loadingValidateKey}
                 >
-                  {loadingValidateQrCode && (
+                  {loadingValidateKey && (
                     <Loader2 className="animate-spin mr-2" />
                   )}
                   Continuar
@@ -172,39 +171,72 @@ export function TransferPixOutSidebar({
                 <Label htmlFor="receipt">Dados do recebedor</Label>
                 <Input
                   id="receipt"
-                  value={`${pixInfoData.info.name} - ${formatDocument(
-                    pixInfoData.info.document
+                  value={`${pixInfoData.key.name} - ${formatDocument(
+                    pixInfoData.key.document
                   )}`}
                   disabled
                 />
 
                 <div className="mt-2">
-                  <Label htmlFor="receipt">Conta</Label>
+                  <Label htmlFor="bank">Banco</Label>
                   <Input
-                    id="receipt"
-                    value={`${
-                      pixInfoData.info.accountNumber
-                    } - ${formatDocument(pixInfoData.info.pspName)}`}
+                    id="bank"
+                    value={`${pixInfoData.key.bankName}${
+                      pixInfoData.key.bankCode
+                        ? ` (${pixInfoData.key.bankCode})`
+                        : ""
+                    }`}
                     disabled
                   />
                 </div>
 
-                <div className="mt-2 mb-2">
-                  <Label htmlFor="receipt">Valor</Label>
+                <div className="mt-2">
+                  <Label htmlFor="amount">Valor</Label>
                   <IntlCurrencyInput
-                    id="receipt"
+                    id="amount"
                     value={value}
                     onChange={(_, rawValue) => {
                       setValue(rawValue);
                     }}
                   />
                 </div>
-                <Button onClick={handlePaymentPix} disabled={loadingPaymentPix}>
-                  {loadingPaymentPix && (
-                    <Loader2 className="animate-spin mr-2" />
-                  )}
-                  Pagar
-                </Button>
+
+                <div className="mt-2 mb-2">
+                  <Label htmlFor="pin">PIN transacional</Label>
+                  <Input
+                    id="pin"
+                    type="password"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    maxLength={6}
+                    value={pin}
+                    onChange={(e) =>
+                      setPin(e.target.value.replace(/\D/g, "").slice(0, 6))
+                    }
+                    placeholder="••••"
+                  />
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={handleResetKey}
+                    disabled={loadingPaymentPix}
+                  >
+                    Trocar chave
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={handlePaymentPix}
+                    disabled={loadingPaymentPix}
+                  >
+                    {loadingPaymentPix && (
+                      <Loader2 className="animate-spin mr-2" />
+                    )}
+                    Pagar
+                  </Button>
+                </div>
               </div>
             </div>
           )}

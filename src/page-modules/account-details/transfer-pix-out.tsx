@@ -52,7 +52,6 @@ export function TransferPixOutSidebar({
   refetch,
 }: PayQrCodeAccountProps) {
   const [key, setKey] = useState<string>("");
-  const [pin, setPin] = useState<string>("");
 
   const [loadingValidateKey, setLoadingValidateKey] = useState(false);
   const [pixInfoData, setPixInfoData] =

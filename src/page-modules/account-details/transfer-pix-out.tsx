@@ -202,21 +202,6 @@ export function TransferPixOutSidebar({
                   />
                 </div>
 
-                <div className="mt-2 mb-2">
-                  <Label htmlFor="pin">PIN transacional</Label>
-                  <Input
-                    id="pin"
-                    type="password"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    maxLength={6}
-                    value={pin}
-                    onChange={(e) =>
-                      setPin(e.target.value.replace(/\D/g, "").slice(0, 6))
-                    }
-                    placeholder="••••"
-                  />
-                </div>
 
                 <div className="flex gap-2">
                   <Button

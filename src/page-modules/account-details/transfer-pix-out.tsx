@@ -19,15 +19,26 @@ import toast from "react-hot-toast";
 import IntlCurrencyInput from "@/components/react-intl-currency-input/intl-currency-input";
 
 interface ValidatePixKeyInfoResponse {
-  key: {
+  info: {
     id: string;
+    accountId: string;
+    endToEndId: string;
     key: string;
-    ispb: string;
+    type: string;
     document: string;
     name: string;
-    bankName: string;
-    bankCode: string;
-    endToEndId: string;
+    agency: string;
+    accountNumber: string;
+    accountType: string;
+    personType: string;
+    pspName: string;
+    institution: string;
+    used: boolean;
+    transactionIdentification: string | null;
+    amount: number | null;
+    initiationType: string;
+    createdAt: string;
+    updatedAt: string;
   };
 }
 
@@ -63,10 +74,10 @@ export function TransferPixOutSidebar({
     try {
       setLoadingValidateKey(true);
       const { data: responsePixInfo } =
-        await api.post<ValidatePixKeyInfoResponse>(
-          `/accounts/${data?.account?.id}/pix/key-info`,
+        await api.get<ValidatePixKeyInfoResponse>(
+          `/accounts/${data?.account?.id}/keys/info`,
           {
-            key: key.trim(),
+            params: { key: key.trim() },
           }
         );
 
@@ -91,7 +102,7 @@ export function TransferPixOutSidebar({
       toast.error("Informe seu PIN transacional.", toastStyle.error);
       return;
     }
-    if (!pixInfoData?.key?.id) {
+    if (!pixInfoData?.info?.id) {
       toast.error("Consulte a chave Pix novamente.", toastStyle.error);
       return;
     }
@@ -99,7 +110,7 @@ export function TransferPixOutSidebar({
     try {
       setLoadingPaymentPix(true);
       await api.post(`/accounts/${data?.account?.id}/pix/payment`, {
-        keyInfoId: pixInfoData.key.id,
+        keyInfoId: pixInfoData.info.id,
         amount: value,
         pin,
       });
@@ -171,8 +182,8 @@ export function TransferPixOutSidebar({
                 <Label htmlFor="receipt">Dados do recebedor</Label>
                 <Input
                   id="receipt"
-                  value={`${pixInfoData.key.name} - ${formatDocument(
-                    pixInfoData.key.document
+                  value={`${pixInfoData.info.name} - ${formatDocument(
+                    pixInfoData.info.document
                   )}`}
                   disabled
                 />
@@ -181,9 +192,9 @@ export function TransferPixOutSidebar({
                   <Label htmlFor="bank">Banco</Label>
                   <Input
                     id="bank"
-                    value={`${pixInfoData.key.bankName}${
-                      pixInfoData.key.bankCode
-                        ? ` (${pixInfoData.key.bankCode})`
+                    value={`${pixInfoData.info.pspName}${
+                      pixInfoData.info.institution
+                        ? ` (${pixInfoData.info.institution})`
                         : ""
                     }`}
                     disabled

@@ -52,7 +52,6 @@ export function TransferPixOutSidebar({
   refetch,
 }: PayQrCodeAccountProps) {
   const [key, setKey] = useState<string>("");
-  const [pin, setPin] = useState<string>("");
 
   const [loadingValidateKey, setLoadingValidateKey] = useState(false);
   const [pixInfoData, setPixInfoData] =
@@ -96,10 +95,6 @@ export function TransferPixOutSidebar({
       toast.error("O valor deve ser maior que zero.", toastStyle.error);
       return;
     }
-    if (!pin || pin.length < 4) {
-      toast.error("Informe seu PIN transacional.", toastStyle.error);
-      return;
-    }
     if (!pixInfoData?.info?.id) {
       toast.error("Consulte a chave Pix novamente.", toastStyle.error);
       return;
@@ -108,9 +103,8 @@ export function TransferPixOutSidebar({
     try {
       setLoadingPaymentPix(true);
       await api.post(`/accounts/${data?.account?.id}/pix/payment`, {
-        keyInfoId: pixInfoData.info.id,
+        id: pixInfoData.info.id,
         amount: value,
-        pin,
       });
 
       toast.success("Pagamento realizado com sucesso!", {
@@ -119,7 +113,6 @@ export function TransferPixOutSidebar({
       });
       await refetch();
       setValue(0);
-      setPin("");
       setPixInfoData(null);
       setKey("");
     } catch (err) {
@@ -133,7 +126,6 @@ export function TransferPixOutSidebar({
   function handleResetKey() {
     setPixInfoData(null);
     setValue(0);
-    setPin("");
   }
 
   return (
@@ -210,21 +202,6 @@ export function TransferPixOutSidebar({
                   />
                 </div>
 
-                <div className="mt-2 mb-2">
-                  <Label htmlFor="pin">PIN transacional</Label>
-                  <Input
-                    id="pin"
-                    type="password"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    maxLength={6}
-                    value={pin}
-                    onChange={(e) =>
-                      setPin(e.target.value.replace(/\D/g, "").slice(0, 6))
-                    }
-                    placeholder="••••"
-                  />
-                </div>
 
                 <div className="flex gap-2">
                   <Button

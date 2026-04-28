@@ -1,16 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  any,
-  bool,
-  func,
-  instanceOf,
-  node,
-  number,
-  oneOfType,
-  shape,
-  string,
-} from "prop-types";
 
 import formatCurrency from "./format-currency";
 import { IntlCurrencyInputProps, IntlFormatterConfig } from "./types";
@@ -209,40 +198,6 @@ const IntlCurrencyInput = ({
       onKeyUp={handleKeyUp}
     />
   );
-};
-
-const checkCurrentPropType = () => (Element ? instanceOf(Element) : any);
-
-IntlCurrencyInput.propTypes = {
-  defaultValue: number,
-  value: number,
-  max: number,
-  component: node.isRequired,
-  currency: string.isRequired,
-  config: shape({}).isRequired,
-  autoFocus: bool.isRequired,
-  autoSelect: bool.isRequired,
-  autoReset: bool.isRequired,
-  onChange: func.isRequired,
-  onBlur: func.isRequired,
-  onFocus: func.isRequired,
-  onKeyPress: func.isRequired,
-  inputRef: oneOfType([func, shape({ current: checkCurrentPropType() })]),
-};
-
-IntlCurrencyInput.defaultProps = {
-  component: "input",
-  currency: "USD",
-  value: 0,
-  config: defaultConfig,
-  autoFocus: false,
-  autoSelect: false,
-  autoReset: false,
-  onChange: () => {},
-  onBlur: () => {},
-  onFocus: () => {},
-  onKeyPress: () => {},
-  inputRef: null,
 };
 
 export default IntlCurrencyInput;

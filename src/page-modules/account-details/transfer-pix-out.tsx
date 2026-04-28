@@ -74,11 +74,9 @@ export function TransferPixOutSidebar({
     try {
       setLoadingValidateKey(true);
       const { data: responsePixInfo } =
-        await api.get<ValidatePixKeyInfoResponse>(
+        await api.post<ValidatePixKeyInfoResponse>(
           `/accounts/${data?.account?.id}/keys/info`,
-          {
-            params: { key: key.trim() },
-          }
+          { key: key.trim() }
         );
 
       setPixInfoData(responsePixInfo);

@@ -19,15 +19,26 @@ import toast from "react-hot-toast";
 import IntlCurrencyInput from "@/components/react-intl-currency-input/intl-currency-input";
 
 interface ValidatePixKeyInfoResponse {
-  key: {
+  info: {
     id: string;
+    accountId: string;
+    endToEndId: string;
     key: string;
-    ispb: string;
+    type: string;
     document: string;
     name: string;
-    bankName: string;
-    bankCode: string;
-    endToEndId: string;
+    agency: string;
+    accountNumber: string;
+    accountType: string;
+    personType: string;
+    pspName: string;
+    institution: string;
+    used: boolean;
+    transactionIdentification: string | null;
+    amount: number | null;
+    initiationType: string;
+    createdAt: string;
+    updatedAt: string;
   };
 }
 

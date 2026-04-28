@@ -102,7 +102,7 @@ export function TransferPixOutSidebar({
       toast.error("Informe seu PIN transacional.", toastStyle.error);
       return;
     }
-    if (!pixInfoData?.key?.id) {
+    if (!pixInfoData?.info?.id) {
       toast.error("Consulte a chave Pix novamente.", toastStyle.error);
       return;
     }
@@ -110,7 +110,7 @@ export function TransferPixOutSidebar({
     try {
       setLoadingPaymentPix(true);
       await api.post(`/accounts/${data?.account?.id}/pix/payment`, {
-        keyInfoId: pixInfoData.key.id,
+        keyInfoId: pixInfoData.info.id,
         amount: value,
         pin,
       });
